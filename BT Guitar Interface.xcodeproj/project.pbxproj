@@ -7,17 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8C867EC1C8D2BAE002EA034 /* NRFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C867EB1C8D2BAE002EA034 /* NRFManager.swift */; };
 		E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C09B1C8BC37C00075EED /* AppDelegate.swift */; };
 		E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09D1C8BC37C00075EED /* Assets.xcassets */; };
 		E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09F1C8BC37C00075EED /* MainMenu.xib */; };
+		E8E1C0AA1C8BCCD300075EED /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */; };
+		E8E1C0AB1C8BCCD300075EED /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */; };
+		FBD6EF4B8267A048F6BAFEFC /* Pods_BT_Guitar_Interface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BT_Guitar_Interface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.debug.xcconfig"; sourceTree = "<group>"; };
+		E8C867EB1C8D2BAE002EA034 /* NRFManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NRFManager.swift; path = "../../../../../../Downloads/nRF8001-Swift-master/nRF8001-Swift/NRFManager.swift"; sourceTree = "<group>"; };
 		E8E1C0981C8BC37C00075EED /* BT Guitar Interface.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BT Guitar Interface.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E1C09B1C8BC37C00075EED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E8E1C09D1C8BC37C00075EED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E8E1C0A01C8BC37C00075EED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		E8E1C0A21C8BC37C00075EED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
+		E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MasterViewController.xib; sourceTree = "<group>"; };
+		F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.release.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -25,17 +35,40 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBD6EF4B8267A048F6BAFEFC /* Pods_BT_Guitar_Interface.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7DA4552F2B97B91A13809F32 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */,
+				F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		E01F58EA13DB413F15584295 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E8E1C08F1C8BC37C00075EED = {
 			isa = PBXGroup;
 			children = (
+				E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */,
+				E8C867EB1C8D2BAE002EA034 /* NRFManager.swift */,
+				E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */,
 				E8E1C09A1C8BC37C00075EED /* BT Guitar Interface */,
 				E8E1C0991C8BC37C00075EED /* Products */,
+				7DA4552F2B97B91A13809F32 /* Pods */,
+				E01F58EA13DB413F15584295 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -65,9 +98,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E8E1C0A51C8BC37C00075EED /* Build configuration list for PBXNativeTarget "BT Guitar Interface" */;
 			buildPhases = (
+				DB9CB7D2E35B69ABB6A5D86D /* Check Pods Manifest.lock */,
 				E8E1C0941C8BC37C00075EED /* Sources */,
 				E8E1C0951C8BC37C00075EED /* Frameworks */,
 				E8E1C0961C8BC37C00075EED /* Resources */,
+				F8257D251869B198CA799239 /* Embed Pods Frameworks */,
+				AE7D3AFE8EDAAC0552FDC23C /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -118,16 +154,67 @@
 			files = (
 				E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */,
 				E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */,
+				E8E1C0AB1C8BCCD300075EED /* MasterViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AE7D3AFE8EDAAC0552FDC23C /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DB9CB7D2E35B69ABB6A5D86D /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F8257D251869B198CA799239 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E8E1C0941C8BC37C00075EED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8E1C0AA1C8BCCD300075EED /* MasterViewController.swift in Sources */,
+				E8C867EC1C8D2BAE002EA034 /* NRFManager.swift in Sources */,
 				E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,25 +315,32 @@
 		};
 		E8E1C0A61C8BC37C00075EED /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "BT Guitar Interface/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BT-Guitar-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		E8E1C0A71C8BC37C00075EED /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "BT Guitar Interface/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BT-Guitar-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};
@@ -269,6 +363,7 @@
 				E8E1C0A71C8BC37C00075EED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
