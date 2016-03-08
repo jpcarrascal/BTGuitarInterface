@@ -121,7 +121,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                                     self.message.arguments = [value]
                                     self.message.address = self.OSCAddresses[index]
                                     self.client.sendMessage(self.message, to: "udp://\(serverAddress):\(serverPort)")
-                                    //print("Sent \(self.OSCAddresses[index]), \(value)")
+                                    print("Sent \(self.OSCAddresses[index]), \(value)")
                                 }
                                 self.prevValues[index] = value
                             }
