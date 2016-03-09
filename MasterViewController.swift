@@ -14,14 +14,14 @@ import IOBluetooth
 ////class MasterViewController: NSViewController {
 class MasterViewController: NSViewController, NRFManagerDelegate {
 
+    @IBOutlet weak var outputSelect: NSTabViewItem!
     @IBOutlet weak var scanProgress: NSProgressIndicator!
     @IBOutlet weak var scanText: NSTextField!
     @IBOutlet weak var BTConnectText: NSButton!
     @IBOutlet weak var BTIndicator: NSImageView!
     @IBOutlet weak var OSCActive: NSButton!
-    @IBOutlet weak var MIDIActive: NSButton!
     @IBOutlet weak var OSCAddress: NSTextField!
-    @IBOutlet weak var OSCPort: NSTextFieldCell!
+    @IBOutlet weak var OSCPort: NSTextField!
     @IBOutlet weak var OSCAddrRibbon: NSTextField!
     @IBOutlet weak var OSCAddrKnob: NSTextField!
     @IBOutlet weak var OSCAddrAccel: NSTextField!
@@ -37,11 +37,14 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
 //    private let server = OSCServer()
     private let message = OSCMessage()
     private var OSCAddresses = [String]()
+    private var serverAddress:String = ""
+    private var serverPort:Int = 0
     private var prevValues = [Int]()
     private var availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices
     private var deviceListNames = [String]()
     private var BTStatus = false;
 
+    
     ////
     var nrfManager:NRFManager!
 
@@ -52,6 +55,47 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             self.scanProgress.startAnimation(nil)
             self.scanText.stringValue = "Connecting to RFDuino"
             self.nrfManager.connect()
+        }
+    }
+    
+    @IBAction func selectOutputProtocol(sender: AnyObject) {
+        if OSCActive.intValue == 1 {
+            nrfManager.dataCallback = {
+                (data:NSData?, string:String?)->() in
+                //print("Recieved data - String: \(string) - Data: \(data)")
+                if let dataString = string {
+                    let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
+                    for index in 0...(self.OSCAddresses.count-1) {
+                        if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
+                            if(value != self.prevValues[index]){
+                                self.message.arguments = [value]
+                                self.message.address = self.OSCAddresses[index]
+                                self.client.sendMessage(self.message, to: "udp://\(self.serverAddress):\(self.serverPort)")
+                                //print("Sent \(self.OSCAddresses[index]), \(value)")
+                                self.prevValues[index] = value
+                            }
+                        }
+                    }
+                }
+            }
+            print("Using OSC")
+        } else {
+            nrfManager.dataCallback = {
+                (data:NSData?, string:String?)->() in
+                //print("Recieved data - String: \(string) - Data: \(data)")
+                if let dataString = string {
+                    let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
+                    for index in 0...(self.OSCAddresses.count-1) {
+                        if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
+                            if(value != self.prevValues[index]){
+                                //print("Sending MIDI")
+                                self.prevValues[index] = value
+                            }
+                        }
+                    }
+                }
+            }
+            print("Using MIDI")
         }
     }
     
@@ -81,12 +125,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         ////
         scanProgress.startAnimation(nil)
         
-        let serverAddress = OSCAddress.stringValue
-        let serverPort = OSCPort.stringValue
+        serverAddress = OSCAddress.stringValue
+        serverPort = OSCPort.integerValue
         OSCAddresses.append(OSCAddrRibbon.stringValue)
         OSCAddresses.append(OSCAddrKnob.stringValue)
         OSCAddresses.append(OSCAddrAccel.stringValue)
         prevValues = [0,0,0]
+        
         BTConnectText.title = "Connecting"
         BTConnectText.enabled = false
         
@@ -109,29 +154,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 self.BTIndicator.image = NSImage(named: "NSStatusPartiallyAvailable")
                 self.scanText.stringValue = "RFDuino found (not connected)"
             },
-            onData: {
-                (data:NSData?, string:String?)->() in
-                //print("Recieved data - String: \(string) - Data: \(data)")
-                if let dataString = string {
-                    let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    for index in 0...(self.OSCAddresses.count-1) {
-                        if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
-                            if(value != self.prevValues[index]){
-                                if(self.OSCActive.integerValue == 1) {
-                                    self.message.arguments = [value]
-                                    self.message.address = self.OSCAddresses[index]
-                                    self.client.sendMessage(self.message, to: "udp://\(serverAddress):\(serverPort)")
-                                    print("Sent \(self.OSCAddresses[index]), \(value)")
-                                }
-                                self.prevValues[index] = value
-                            }
-                        }
-                    }
-                }
-            },
+            onData: nil,
             autoConnect: true
         )
         
+        //nrfManager.dataCallback = OSCFunction
         nrfManager.verbose = false;
         print(OSCAddress.stringValue)
         print(OSCPort.stringValue)
