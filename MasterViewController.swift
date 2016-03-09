@@ -20,6 +20,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var BTConnectText: NSButton!
     @IBOutlet weak var BTIndicator: NSImageView!
     @IBOutlet weak var OSCActive: NSButton!
+    @IBOutlet weak var MIDIActive: NSButton!
     @IBOutlet weak var OSCAddress: NSTextField!
     @IBOutlet weak var OSCPort: NSTextField!
     @IBOutlet weak var OSCAddrRibbon: NSTextField!
@@ -53,11 +54,21 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             self.nrfManager.disconnect()
         } else {
             self.scanProgress.startAnimation(nil)
-            self.scanText.stringValue = "Connecting to RFDuino"
+            self.scanText.stringValue = "Searching for to " + nrfManager.RFDuinoName
             self.nrfManager.connect()
         }
     }
     
+/*    @IBAction func about(sender: AnyObject) {
+        if let checkURL = NSURL(string: "//www.spacebarman.com") {
+            if NSWorkspace.sharedWorkspace().openURL(checkURL) {
+                print("url successfully opened")
+            }
+        } else {
+            print("invalid url")
+        }
+    }
+*/  
     @IBAction func selectOutputProtocol(sender: AnyObject) {
         if OSCActive.intValue == 1 {
             nrfManager.dataCallback = {
@@ -79,7 +90,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
             print("Using OSC")
-        } else {
+        } else if MIDIActive.intValue == 1 {
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 //print("Recieved data - String: \(string) - Data: \(data)")
@@ -96,6 +107,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
             print("Using MIDI")
+        } else {
+            nrfManager.dataCallback = nil
+            print("Enjoy the silence...")
         }
     }
     
@@ -132,9 +146,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         OSCAddresses.append(OSCAddrAccel.stringValue)
         prevValues = [0,0,0]
         
-        BTConnectText.title = "Connecting"
-        BTConnectText.enabled = false
-        
         nrfManager = NRFManager(
             onConnect: {
                 self.BTStatus = true
@@ -144,7 +155,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 self.nrfManager.autoConnect = true
                 self.BTIndicator.image = NSImage(named: "NSStatusAvailable")
                 self.scanProgress.stopAnimation(nil)
-                self.scanText.stringValue = "Connected to RFDuino"
+                self.scanText.stringValue = "Connected to " + self.nrfManager.RFDuinoName
             },
             onDisconnect: {
                 self.BTStatus = false
@@ -157,9 +168,10 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             onData: nil,
             autoConnect: true
         )
-        
-        //nrfManager.dataCallback = OSCFunction
         nrfManager.verbose = false;
+        scanText.stringValue = "Searching for to " + nrfManager.RFDuinoName + "..."
+        BTConnectText.title = "Connecting"
+        BTConnectText.enabled = false
         print(OSCAddress.stringValue)
         print(OSCPort.stringValue)
         refreshMIDIDevices(0)

@@ -49,6 +49,8 @@ public class NRFManager:NSObject, CBCentralManagerDelegate, UARTPeripheralDelega
     public var verbose = false
     public var autoConnect = true
     public var delegate:NRFManagerDelegate?
+    // JP: Define name of device to connect:
+    public var RFDuinoName = "JPGuit"
 
     //callbacks
     public var connectionCallback:(()->())?
@@ -212,9 +214,15 @@ extension NRFManager {
     
         public func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber)
         {
-            log("Did discover peripheral: \(peripheral.name)")
-            bluetoothManager.stopScan()
-            connectPeripheral(peripheral)
+            /*
+                JP:
+                Connect only if desired device is found:
+            */
+            if peripheral.name == RFDuinoName {
+                log("Did discover peripheral: \(peripheral.name)")
+                bluetoothManager.stopScan()
+                connectPeripheral(peripheral)
+            }
         }
     
         public func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral)
