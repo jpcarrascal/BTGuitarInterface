@@ -37,7 +37,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     private let client = OSCClient()
 //    private let server = OSCServer()
     private let message = OSCMessage()
-    private var OSCAddresses = [String]()
+    private var receivedMessages = [String]()
     private var serverAddress:String = ""
     private var serverPort:Int = 0
     private var prevValues = [Int]()
@@ -76,11 +76,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 //print("Recieved data - String: \(string) - Data: \(data)")
                 if let dataString = string {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    for index in 0...(self.OSCAddresses.count-1) {
+                    for index in 0...(self.receivedMessages.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             if(value != self.prevValues[index]){
                                 self.message.arguments = [value]
-                                self.message.address = self.OSCAddresses[index]
+                                self.message.address = self.receivedMessages[index]
                                 self.client.sendMessage(self.message, to: "udp://\(self.serverAddress):\(self.serverPort)")
                                 //print("Sent \(self.OSCAddresses[index]), \(value)")
                                 self.prevValues[index] = value
@@ -96,7 +96,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 //print("Recieved data - String: \(string) - Data: \(data)")
                 if let dataString = string {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    for index in 0...(self.OSCAddresses.count-1) {
+                    for index in 0...(self.receivedMessages.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             if(value != self.prevValues[index]){
                                 //print("Sending MIDI")
@@ -141,9 +141,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         
         serverAddress = OSCAddress.stringValue
         serverPort = OSCPort.integerValue
-        OSCAddresses.append(OSCAddrRibbon.stringValue)
-        OSCAddresses.append(OSCAddrKnob.stringValue)
-        OSCAddresses.append(OSCAddrAccel.stringValue)
+        receivedMessages.append(OSCAddrRibbon.stringValue)
+        receivedMessages.append(OSCAddrKnob.stringValue)
+        receivedMessages.append(OSCAddrAccel.stringValue)
         prevValues = [0,0,0]
         
         nrfManager = NRFManager(
