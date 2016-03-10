@@ -9,7 +9,6 @@
 import Cocoa
 import OSCKit
 import IOBluetooth
-import MIKMIDI
 
 ////class MasterViewController: NSViewController {
 class MasterViewController: NSViewController, NRFManagerDelegate {
@@ -41,13 +40,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     private var serverAddress:String = ""
     private var serverPort:Int = 0
     private var prevValues = [Int]()
-    private var availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices
     private var deviceListNames = [String]()
     private var BTStatus = false;
 
     
     ////
     var nrfManager:NRFManager!
+    var midiManager:MIDIManager!
 
     @IBAction func BTConnect(sender: AnyObject) {
         if self.BTStatus {
@@ -114,23 +113,10 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     }
     
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
-        deviceListNames.removeAll()
-        availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices
-        for device in availableDevices {
-            if(device.entities.count > 0){
-                for entity in device.entities {
-                    if(entity.destinations.count > 0) {
-                        for destination in entity.destinations {
-                            deviceListNames.append(destination.name!)
-                        }
-                    }
-                }
-            }
-        }
-
-        print(deviceListNames)
+        midiManager.getActiveMIDIDevices()
+        print(midiManager.activeMIDIDeviceNames)
         MIDIDevice.removeAllItems()
-        MIDIDevice.addItemsWithObjectValues(deviceListNames)
+        MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
         MIDIDevice.selectItemAtIndex(0)
     }
     
@@ -175,11 +161,33 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         BTConnectText.enabled = false
         print(OSCAddress.stringValue)
         print(OSCPort.stringValue)
-        refreshMIDIDevices(0)
+        
         
         MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
         MIDIChannel.selectItemAtIndex(0)
+        midiManager = MIDIManager()
+        refreshMIDIDevices(0)
+  /*
+        
+//        private var availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices
+//        NSArray *availableMIDIDevices = [[MIKMIDIDeviceManager sharedDeviceManager] availableDevices];
+        
+        
+        var date = NSDate().timeIntervalSince1970
+//        var noteOn = MIKMIDINoteOnCommand(note: 60, velocity: 127, channel: 0, timestamp: date)
+//        var noteOff = MIKMIDINoteOnCommand(note: 60, velocity: 127, channel: 0, timestamp: date)
+        
+        
+        let msg = MIDIChannelMessage(status: 1, data1: 2, data2: 3, reserved: 0)
+        let cc = MIKMIDIControlChangeCommand(forCommandType: MIKMIDICommandType)
 
+        var dest = MIKMIDIDestinationEndpoint()
+        var dm = MIKMIDIDeviceManager.sharedDeviceManager()
+        dm.sendCommands([cc], toEndpoint: <#T##MIKMIDIDestinationEndpoint#>)
+            sendCommands([cc], toEndpoint: dest)
+        
+//        [dm sendCommands:@[noteOn, noteOff] toEndpoint:destinationEndpoint error:&error];
+*/
     }
     
     override func awakeFromNib() {

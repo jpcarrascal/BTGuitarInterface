@@ -66,8 +66,8 @@
 		E8E1C08F1C8BC37C00075EED = {
 			isa = PBXGroup;
 			children = (
-				E8637E741C90E67900BB38D5 /* MIDIManager.swift */,
 				E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */,
+				E8637E741C90E67900BB38D5 /* MIDIManager.swift */,
 				E89A09211C8F94E1009AD1A9 /* NRFManager.swift */,
 				E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */,
 				E89A09231C8FE099009AD1A9 /* README.md */,
