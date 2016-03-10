@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8637E751C90E67900BB38D5 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8637E741C90E67900BB38D5 /* MIDIManager.swift */; };
 		E89A09221C8F94E1009AD1A9 /* NRFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89A09211C8F94E1009AD1A9 /* NRFManager.swift */; };
 		E89A09241C8FE099009AD1A9 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = E89A09231C8FE099009AD1A9 /* README.md */; };
 		E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C09B1C8BC37C00075EED /* AppDelegate.swift */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BT_Guitar_Interface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.debug.xcconfig"; sourceTree = "<group>"; };
+		E8637E741C90E67900BB38D5 /* MIDIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
 		E89A09211C8F94E1009AD1A9 /* NRFManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NRFManager.swift; sourceTree = "<group>"; };
 		E89A09231C8FE099009AD1A9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E8E1C0981C8BC37C00075EED /* BT Guitar Interface.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BT Guitar Interface.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,6 +66,7 @@
 		E8E1C08F1C8BC37C00075EED = {
 			isa = PBXGroup;
 			children = (
+				E8637E741C90E67900BB38D5 /* MIDIManager.swift */,
 				E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */,
 				E89A09211C8F94E1009AD1A9 /* NRFManager.swift */,
 				E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */,
@@ -220,6 +223,7 @@
 				E89A09221C8F94E1009AD1A9 /* NRFManager.swift in Sources */,
 				E89A09241C8FE099009AD1A9 /* README.md in Sources */,
 				E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */,
+				E8637E751C90E67900BB38D5 /* MIDIManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +332,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BT-Guitar-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -344,6 +349,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BT-Guitar-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;

@@ -8,8 +8,8 @@
 
 import Cocoa
 import OSCKit
-import MIKMIDI
 import IOBluetooth
+import MIKMIDI
 
 ////class MasterViewController: NSViewController {
 class MasterViewController: NSViewController, NRFManagerDelegate {
@@ -127,6 +127,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
         }
+
         print(deviceListNames)
         MIDIDevice.removeAllItems()
         MIDIDevice.addItemsWithObjectValues(deviceListNames)
@@ -178,6 +179,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         
         MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
         MIDIChannel.selectItemAtIndex(0)
+
     }
     
     override func awakeFromNib() {
