@@ -13,7 +13,7 @@ public class MIDIManager:NSObject {
 
     private var midiClient = MIDIClientRef()
     private var outputPort = MIDIPortRef()
-    private var activeMIDIDevices = [Int]()
+    public var activeMIDIDevices = [Int]()
     public var activeMIDIDeviceNames = [String]()
     
     public init(thing:Bool = true) {
@@ -41,11 +41,16 @@ public class MIDIManager:NSObject {
             if let midiProperties: CFPropertyList = props?.takeUnretainedValue() {
                 let midiDictionary = midiProperties as! NSDictionary
                 if midiDictionary["offline"] !== 1 {
-                    //print(midiDictionary["entities"])
-                    activeMIDIDeviceNames.append(midiDictionary["name"] as! String)
-                    activeMIDIDevices.append(i)
+                    if midiDictionary["entities"]!.count != 0 {
+                        let entities = midiDictionary["entities"]!
+                        for entity in entities as! [AnyObject] {
+                            if entity["destinations"]!!.count > 0 {
+                                activeMIDIDeviceNames.append(entity["name"] as! String)
+                                activeMIDIDevices.append(entity["uniqueID"] as! Int)
+                            }
+                        }
+                    }
                 }
-//                print("Midi properties: \(index) \n \(midiDictionary)");
             } else {
                 print("Couldn't load properties for \(index)")
             }

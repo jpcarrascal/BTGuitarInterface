@@ -115,6 +115,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
         midiManager.getActiveMIDIDevices()
         print(midiManager.activeMIDIDeviceNames)
+        print(midiManager.activeMIDIDevices)
         MIDIDevice.removeAllItems()
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
         MIDIDevice.selectItemAtIndex(0)
