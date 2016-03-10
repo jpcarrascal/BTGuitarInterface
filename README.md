@@ -8,7 +8,6 @@ This project obeys very specific personal needs, but might be useful for similar
 I am also using Cocoapods to install and manage these libraries:
 
 - OSCKit (https://github.com/256dpi/OSCKit): For sending OSC (http://opensoundcontrol.org/introduction-osc) to other apps
-- MIKMIDI (https://github.com/mixedinkey-opensource/MIKMIDI): MIDI Swift implementation is still a bit messy MIKMIDI helps sorting it out.
 
 I will be posting info on this project in my blog at www.jpcarrascal.com.
 
