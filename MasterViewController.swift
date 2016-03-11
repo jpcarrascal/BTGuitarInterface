@@ -39,7 +39,8 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     private var receivedMessages = [String]()
     private var serverAddress:String = ""
     private var serverPort:Int = 0
-    private var prevValues = [Int]()
+    private var prevOSCValues = [Int]()
+    private var prevMIDIValues = [UInt8]()
     private var deviceListNames = [String]()
     private var BTStatus = false;
 
@@ -77,12 +78,12 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
                     for index in 0...(self.receivedMessages.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
-                            if(value != self.prevValues[index]){
+                            if(value != self.prevOSCValues[index]){
                                 self.message.arguments = [value]
                                 self.message.address = self.receivedMessages[index]
                                 self.client.sendMessage(self.message, to: "udp://\(self.serverAddress):\(self.serverPort)")
                                 //print("Sent \(self.OSCAddresses[index]), \(value)")
-                                self.prevValues[index] = value
+                                self.prevOSCValues[index] = value
                             }
                         }
                     }
@@ -97,9 +98,12 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
                     for index in 0...(self.receivedMessages.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
-                            if(value != self.prevValues[index]){
-                                //print("Sending MIDI")
-                                self.prevValues[index] = value
+                            let val:UInt8 = self.midiManager.mapRangeToMIDI(value,0,1023)
+                            if(val != self.prevMIDIValues[index]){
+                                let channel = UInt8(self.MIDIChannel.integerValue)
+                                let cc = UInt8(self.MIDICCRibbon.integerValue)
+                                self.midiManager.send(channel,cc,val)
+                                self.prevMIDIValues[index] = val
                             }
                         }
                     }
@@ -115,11 +119,20 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
         midiManager.getActiveMIDIDevices()
         print(midiManager.activeMIDIDeviceNames)
-        print(midiManager.activeMIDIDevices)
         MIDIDevice.removeAllItems()
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
         MIDIDevice.selectItemAtIndex(0)
     }
+    
+    @IBAction func refreshOSCParameters(sender: AnyObject) {
+        serverAddress = OSCAddress.stringValue
+        serverPort = OSCPort.integerValue
+        receivedMessages.removeAll()
+        receivedMessages.append(OSCAddrRibbon.stringValue)
+        receivedMessages.append(OSCAddrKnob.stringValue)
+        receivedMessages.append(OSCAddrAccel.stringValue)
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,7 +145,8 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         receivedMessages.append(OSCAddrRibbon.stringValue)
         receivedMessages.append(OSCAddrKnob.stringValue)
         receivedMessages.append(OSCAddrAccel.stringValue)
-        prevValues = [0,0,0]
+        prevOSCValues = [0,0,0]
+        prevMIDIValues = [0,0,0]
         
         nrfManager = NRFManager(
             onConnect: {
@@ -160,14 +174,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         scanText.stringValue = "Searching for to " + nrfManager.RFDuinoName + "..."
         BTConnectText.title = "Connecting"
         BTConnectText.enabled = false
-        print(OSCAddress.stringValue)
-        print(OSCPort.stringValue)
-        
         
         MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
         MIDIChannel.selectItemAtIndex(0)
         midiManager = MIDIManager()
-        refreshMIDIDevices(0)
+        
+        MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
+        MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice)
   /*
         
 //        private var availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices

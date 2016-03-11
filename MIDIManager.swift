@@ -13,21 +13,22 @@ public class MIDIManager:NSObject {
 
     private var midiClient = MIDIClientRef()
     private var outputPort = MIDIPortRef()
-    public var activeMIDIDevices = [Int]()
+    private var activeMIDIDevices = [Int]()
     public var activeMIDIDeviceNames = [String]()
+    public var selectedMIDIDevice = Int()
     
     public init(thing:Bool = true) {
         super.init()
         var status = OSStatus(noErr)
-        
         let np:MIDINotifyProc = { (notification:UnsafePointer<MIDINotification>, refcon:UnsafeMutablePointer<Void>) in
         }
-        
         status = MIDIClientCreate("MyMIDIClient", np, nil, &midiClient)
         status = MIDIOutputPortCreate(midiClient, "Output", &outputPort);
         if status != OSStatus(noErr){
-            print("Somthing wrong happened")
+            print("Error initializing MIDIManager")
         }
+        getActiveMIDIDevices()
+        selectedMIDIDevice = 0
     }
     
     public func getActiveMIDIDevices() {
@@ -55,38 +56,40 @@ public class MIDIManager:NSObject {
                 print("Couldn't load properties for \(index)")
             }
         }
+        print(activeMIDIDeviceNames)
+        print(activeMIDIDevices)
     }
 
-    public func send() {
+    public func send(MIDIChannel: UInt8, _ MIDIControl: UInt8, _ MIDIControlValue: UInt8) ->OSStatus {
+/*
+        // Maybe this block works for iOS?
+        var status = OSStatus(noErr)
         var endPoint = MIDIObjectRef()
         var foundObj = MIDIObjectType.Destination
-        
-        _ = MIDIObjectFindByUniqueID(0, &endPoint, &foundObj)
-
+        status = MIDIObjectFindByUniqueID(Int32(activeMIDIDevices[selectedMIDIDevice]), &endPoint, &foundObj)
         var pkt = UnsafeMutablePointer<MIDIPacket>.alloc(1)
         let pktList = UnsafeMutablePointer<MIDIPacketList>.alloc(1)
         let midiData : [UInt8] = [UInt8(144), UInt8(36), UInt8(5)]
         pkt = MIDIPacketListInit(pktList)
-        pkt = MIDIPacketListAdd(pktList, 1024, pkt, 0, 3, midiData)
-
+        pkt = MIDIPacketListAdd(pktList, sizeof(pktList.dynamicType), pkt, 0, midiData.count, midiData)
         MIDISend(outputPort, endPoint, pktList)
-
-/*
-        let pushDevice = MIDIGetDevice(0)
-        print("I'm sending... in theory")
-        
-        let secondEntity = MIDIDeviceGetEntity(pushDevice, 1)
-        
-        let pushDestination = MIDIEntityGetDestination(secondEntity, 0)
-        
-        let myData : [UInt8] = [ UInt8(144), UInt8(36), UInt8(5) ]
-        var packet = UnsafeMutablePointer<MIDIPacket>.alloc(1)
-        let pkList = UnsafeMutablePointer<MIDIPacketList>.alloc(1)
-        packet = MIDIPacketListInit(pkList)
-        packet = MIDIPacketListAdd(pkList, 1024, packet, 0, 3, myData)
-        
-        MIDISend(outputPort, pushDestination, pkList)
 */
+        let dest:MIDIEndpointRef = MIDIGetDestination(selectedMIDIDevice)
+        var packet:MIDIPacket = MIDIPacket()
+        packet.timeStamp = 0
+        packet.length = 3
+        //packet.data.0 = 0xB0 + MIDIchannel // Controller and channel number
+        packet.data.0 = UInt8(176) + MIDIChannel-1 // Controller + channel number
+        packet.data.1 = MIDIControl // Control number
+        packet.data.2 = MIDIControlValue // Control value
+
+        var packetList:MIDIPacketList = MIDIPacketList(numPackets: 1, packet: packet);
+        
+        return MIDISend(outputPort, dest, &packetList)
+    }
+    
+    func mapRangeToMIDI(input: Int, _ input_lowest: Int, _ input_highest: Int) ->UInt8{
+        return UInt8((127 / (float_t(input_highest) - float_t(input_lowest))) * (float_t(input) - float_t(input_lowest)))
     }
     
 }
