@@ -18,39 +18,42 @@ public class MIDIManager:NSObject {
     private var activeMIDIDevices = [Int]()
     private let np:MIDINotifyProc = { (notification:UnsafePointer<MIDINotification>, refcon:UnsafeMutablePointer<Void>) in
     }
-    private var destination = MIDIEndpointRef()
+    private var destination:MIDIEndpointRef = MIDIEndpointRef()
     private(set) public var selectedMIDIDevice = Int()
     public var activeMIDIDeviceNames = [String]()
     
     public init(thing:Bool = true) {
         super.init()
-        var status = OSStatus(noErr)
-        status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
-        status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
-        MIDISourceCreate(virtualMidiClient, "BT Guitar Port", &virtualOutputPort);
-        if status != OSStatus(noErr){
-            print("Error initializing MIDIManager")
-        }
-        getActiveMIDIDevices()
-        setActiveMIDIDevice(0)
-        selectedMIDIDevice = 0
+        getMIDIDevices()
+        // -1 is the virtual MIDI port
+        setActiveMIDIDevice(-1)
+        selectedMIDIDevice = -1
     }
     
     public func setActiveMIDIDevice(index:Int)
     {
         var status = OSStatus(noErr)
-        status = MIDIClientCreate("MIDIClient", np, nil, &midiClient)
-        status = MIDIOutputPortCreate(midiClient, "Output", &outputPort);
-        destination = MIDIGetDestination(activeMIDIDevices[index])
-        print("Active device: \(activeMIDIDevices[index]) (\(activeMIDIDeviceNames[index]))")
+        if index >= 0 {
+//            MIDIClientDispose(virtualMidiClient)
+            status = MIDIClientCreate("MIDIClient", np, nil, &midiClient)
+            status = MIDIOutputPortCreate(midiClient, "Output", &outputPort);
+            destination = MIDIGetDestination(index)
+        } else {
+//            MIDIClientDispose(midiClient)
+            var status = OSStatus(noErr)
+            status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
+            status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
+            MIDISourceCreate(virtualMidiClient, "BT Guitar Port", &virtualOutputPort);
+        }
         selectedMIDIDevice = index
     }
     
-    public func getActiveMIDIDevices() {
+    public func getMIDIDevices() {
         activeMIDIDeviceNames.removeAll()
         activeMIDIDevices.removeAll()
-        activeMIDIDevices.append(0)
-        activeMIDIDeviceNames.append("BT Guitar Port")
+        // Include:
+        //MIDIGetNumberOfDestinations()
+        //MIDIGetDestination()
         for i in 0...MIDIGetNumberOfDevices()-1 {
             let dev:MIDIDeviceRef = MIDIGetDevice(i)
             var props: Unmanaged<CFPropertyList>?
@@ -82,8 +85,6 @@ public class MIDIManager:NSObject {
                 print("Couldn't load properties for \(index)")
             }
         }
-        print(activeMIDIDeviceNames)
-        print(activeMIDIDevices)
     }
 
     public func send(MIDIChannel: UInt8, _ MIDIControl: UInt8, _ MIDIControlValue: UInt8) ->OSStatus {
@@ -110,7 +111,7 @@ public class MIDIManager:NSObject {
 
         var packetList:MIDIPacketList = MIDIPacketList(numPackets: 1, packet: packet);
 
-        if selectedMIDIDevice == 0 {
+        if selectedMIDIDevice < 0 {
             return MIDIReceived(virtualOutputPort, &packetList)
         }
         else {

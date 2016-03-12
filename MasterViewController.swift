@@ -78,7 +78,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             oscMessage = OSCMessage()
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
-                //print("Recieved data - String: \(string) - Data: \(data)")
                 if let dataString = string {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
                     for index in 0...(self.receivedMessages.count-1) {
@@ -102,10 +101,8 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             MIDIDevice.enabled = true
             midiManager = MIDIManager()
             refreshMIDIDevices(0)
-            selectMIDIDevice(0)
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
-                //print("Recieved data - String: \(string) - Data: \(data)")
                 if let dataString = string {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
                     for index in 0...(self.receivedMessages.count-1) {
@@ -114,7 +111,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                             if(val != self.prevMIDIValues[index]){
                                 let channel = UInt8(self.MIDIChannel.integerValue)
                                 let cc = UInt8(self.MIDICCRibbon.integerValue)
-                                self.midiManager.send(channel,cc,val)
+                                self.midiManager.send(channel,1,val)
                                 self.prevMIDIValues[index] = val
                             }
                         }
@@ -126,21 +123,24 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             oscClient = nil
             oscMessage = nil
             midiManager = nil
+            MIDIRefreshButton.enabled = false
+            MIDIDevice.enabled = false
             nrfManager.dataCallback = nil
             print("Enjoy the silence...")
         }
     }
     
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
-        midiManager.getActiveMIDIDevices()
+        midiManager.getMIDIDevices()
         MIDIDevice.removeAllItems()
+        MIDIDevice.addItemsWithObjectValues(["BT Guitar Port"])
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
-        MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice)
+        MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice+1)
+        print(MIDIDevice.objectValues)
     }
  
     @IBAction func selectMIDIDevice(sender: AnyObject) {
-        print(MIDIDevice.indexOfSelectedItem)
-        midiManager.setActiveMIDIDevice(MIDIDevice.indexOfSelectedItem)
+        midiManager.setActiveMIDIDevice(MIDIDevice.indexOfSelectedItem-1)
     }
     
     @IBAction func refreshOSCParameters(sender: AnyObject) {
@@ -210,7 +210,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
 
         var dest = MIKMIDIDestinationEndpoint()
         var dm = MIKMIDIDeviceManager.sharedDeviceManager()
-        dm.sendCommands([cc], toEndpoint: <#T##MIKMIDIDestinationEndpoint#>)
+        dm.sendCommands([cc], toEndpoint: MIKMIDIDestinationEndpoint)
             sendCommands([cc], toEndpoint: dest)
         
 //        [dm sendCommands:@[noteOn, noteOff] toEndpoint:destinationEndpoint error:&error];
