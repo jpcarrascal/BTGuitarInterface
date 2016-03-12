@@ -13,28 +13,44 @@ public class MIDIManager:NSObject {
 
     private var midiClient = MIDIClientRef()
     private var outputPort = MIDIPortRef()
+    private var virtualMidiClient = MIDIClientRef()
+    private var virtualOutputPort = MIDIPortRef()
     private var activeMIDIDevices = [Int]()
+    private let np:MIDINotifyProc = { (notification:UnsafePointer<MIDINotification>, refcon:UnsafeMutablePointer<Void>) in
+    }
+    private var destination = MIDIEndpointRef()
+    private(set) public var selectedMIDIDevice = Int()
     public var activeMIDIDeviceNames = [String]()
-    public var selectedMIDIDevice = Int()
     
     public init(thing:Bool = true) {
         super.init()
         var status = OSStatus(noErr)
-        let np:MIDINotifyProc = { (notification:UnsafePointer<MIDINotification>, refcon:UnsafeMutablePointer<Void>) in
-        }
-        status = MIDIClientCreate("MyMIDIClient", np, nil, &midiClient)
-        status = MIDIOutputPortCreate(midiClient, "Output", &outputPort);
+        status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
+        status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
+        MIDISourceCreate(virtualMidiClient, "BT Guitar Port", &virtualOutputPort);
         if status != OSStatus(noErr){
             print("Error initializing MIDIManager")
         }
         getActiveMIDIDevices()
+        setActiveMIDIDevice(0)
         selectedMIDIDevice = 0
+    }
+    
+    public func setActiveMIDIDevice(index:Int)
+    {
+        var status = OSStatus(noErr)
+        status = MIDIClientCreate("MIDIClient", np, nil, &midiClient)
+        status = MIDIOutputPortCreate(midiClient, "Output", &outputPort);
+        destination = MIDIGetDestination(activeMIDIDevices[index])
+        print("Active device: \(activeMIDIDevices[index]) (\(activeMIDIDeviceNames[index]))")
+        selectedMIDIDevice = index
     }
     
     public func getActiveMIDIDevices() {
         activeMIDIDeviceNames.removeAll()
         activeMIDIDevices.removeAll()
-        //MIDIGetDevice returns a MIDIDeviceRef, which is an alias of MIDIObjectRef, and both are UINt32
+        activeMIDIDevices.append(0)
+        activeMIDIDeviceNames.append("BT Guitar Port")
         for i in 0...MIDIGetNumberOfDevices()-1 {
             let dev:MIDIDeviceRef = MIDIGetDevice(i)
             var props: Unmanaged<CFPropertyList>?
@@ -43,11 +59,21 @@ public class MIDIManager:NSObject {
                 let midiDictionary = midiProperties as! NSDictionary
                 if midiDictionary["offline"] !== 1 {
                     if midiDictionary["entities"]!.count != 0 {
-                        let entities = midiDictionary["entities"]!
-                        for entity in entities as! [AnyObject] {
-                            if entity["destinations"]!!.count > 0 {
-                                activeMIDIDeviceNames.append(entity["name"] as! String)
-                                activeMIDIDevices.append(entity["uniqueID"] as! Int)
+                        if let entities = midiDictionary["entities"] {
+                            for entity in entities as! NSArray {
+                                //print(entity)
+                                if entity["destinations"]!!.count > 0 {
+                                    if entity["offline"]! == nil {
+                                        activeMIDIDeviceNames.append(entity["name"] as! String)
+                                        activeMIDIDevices.append(entity["uniqueID"] as! Int)
+                                    } else {
+                                        let offline = entity["offline"] as! Int
+                                        if offline != 1 {
+                                            activeMIDIDeviceNames.append(entity["name"] as! String)
+                                            activeMIDIDevices.append(entity["uniqueID"] as! Int)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -74,7 +100,6 @@ public class MIDIManager:NSObject {
         pkt = MIDIPacketListAdd(pktList, sizeof(pktList.dynamicType), pkt, 0, midiData.count, midiData)
         MIDISend(outputPort, endPoint, pktList)
 */
-        let dest:MIDIEndpointRef = MIDIGetDestination(selectedMIDIDevice)
         var packet:MIDIPacket = MIDIPacket()
         packet.timeStamp = 0
         packet.length = 3
@@ -84,8 +109,13 @@ public class MIDIManager:NSObject {
         packet.data.2 = MIDIControlValue // Control value
 
         var packetList:MIDIPacketList = MIDIPacketList(numPackets: 1, packet: packet);
-        
-        return MIDISend(outputPort, dest, &packetList)
+
+        if selectedMIDIDevice == 0 {
+            return MIDIReceived(virtualOutputPort, &packetList)
+        }
+        else {
+            return MIDISend(outputPort, destination, &packetList)
+        }
     }
     
     func mapRangeToMIDI(input: Int, _ input_lowest: Int, _ input_highest: Int) ->UInt8{

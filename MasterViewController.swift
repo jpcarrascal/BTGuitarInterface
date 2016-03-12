@@ -25,6 +25,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var OSCAddrRibbon: NSTextField!
     @IBOutlet weak var OSCAddrKnob: NSTextField!
     @IBOutlet weak var OSCAddrAccel: NSTextField!
+    @IBOutlet weak var MIDIRefreshButton: NSButton!
     @IBOutlet weak var MIDIDevice: NSComboBox!
     @IBOutlet weak var MIDIChannel: NSComboBox!
     @IBOutlet weak var MIDICCRibbon: NSTextField!
@@ -33,9 +34,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var MIDICCAccY: NSTextField!
     @IBOutlet weak var MIDICCAccZ: NSTextField!
     
-    private let client = OSCClient()
-//    private let server = OSCServer()
-    private let message = OSCMessage()
     private var receivedMessages = [String]()
     private var serverAddress:String = ""
     private var serverPort:Int = 0
@@ -46,8 +44,10 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
 
     
     ////
-    var nrfManager:NRFManager!
-    var midiManager:MIDIManager!
+    private var oscClient:OSCClient!
+    private var oscMessage:OSCMessage!
+    private var nrfManager:NRFManager!
+    private var midiManager:MIDIManager!
 
     @IBAction func BTConnect(sender: AnyObject) {
         if self.BTStatus {
@@ -71,6 +71,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
 */  
     @IBAction func selectOutputProtocol(sender: AnyObject) {
         if OSCActive.intValue == 1 {
+            midiManager = nil
+            MIDIRefreshButton.enabled = false
+            MIDIDevice.enabled = false
+            oscClient = OSCClient()
+            oscMessage = OSCMessage()
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 //print("Recieved data - String: \(string) - Data: \(data)")
@@ -79,9 +84,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                     for index in 0...(self.receivedMessages.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             if(value != self.prevOSCValues[index]){
-                                self.message.arguments = [value]
-                                self.message.address = self.receivedMessages[index]
-                                self.client.sendMessage(self.message, to: "udp://\(self.serverAddress):\(self.serverPort)")
+                                self.oscMessage.arguments = [value]
+                                self.oscMessage.address = self.receivedMessages[index]
+                                self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.serverAddress):\(self.serverPort)")
                                 //print("Sent \(self.OSCAddresses[index]), \(value)")
                                 self.prevOSCValues[index] = value
                             }
@@ -91,6 +96,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             }
             print("Using OSC")
         } else if MIDIActive.intValue == 1 {
+            oscClient = nil
+            oscMessage = nil
+            MIDIRefreshButton.enabled = true
+            MIDIDevice.enabled = true
+            midiManager = MIDIManager()
+            refreshMIDIDevices(0)
+            selectMIDIDevice(0)
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 //print("Recieved data - String: \(string) - Data: \(data)")
@@ -111,6 +123,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             }
             print("Using MIDI")
         } else {
+            oscClient = nil
+            oscMessage = nil
+            midiManager = nil
             nrfManager.dataCallback = nil
             print("Enjoy the silence...")
         }
@@ -118,10 +133,14 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
         midiManager.getActiveMIDIDevices()
-        print(midiManager.activeMIDIDeviceNames)
         MIDIDevice.removeAllItems()
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
-        MIDIDevice.selectItemAtIndex(0)
+        MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice)
+    }
+ 
+    @IBAction func selectMIDIDevice(sender: AnyObject) {
+        print(MIDIDevice.indexOfSelectedItem)
+        midiManager.setActiveMIDIDevice(MIDIDevice.indexOfSelectedItem)
     }
     
     @IBAction func refreshOSCParameters(sender: AnyObject) {
@@ -133,13 +152,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         receivedMessages.append(OSCAddrAccel.stringValue)
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
         ////
         scanProgress.startAnimation(nil)
-        
         serverAddress = OSCAddress.stringValue
         serverPort = OSCPort.integerValue
         receivedMessages.append(OSCAddrRibbon.stringValue)
@@ -174,13 +191,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         scanText.stringValue = "Searching for to " + nrfManager.RFDuinoName + "..."
         BTConnectText.title = "Connecting"
         BTConnectText.enabled = false
-        
         MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
         MIDIChannel.selectItemAtIndex(0)
-        midiManager = MIDIManager()
-        
-        MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
-        MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice)
+
   /*
         
 //        private var availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices

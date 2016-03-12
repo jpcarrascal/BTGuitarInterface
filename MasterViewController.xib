@@ -18,6 +18,7 @@
                 <outlet property="MIDICCRibbon" destination="E7U-hs-7Kq" id="yv0-ux-7dR"/>
                 <outlet property="MIDIChannel" destination="ThH-xy-8k4" id="8yF-sM-6lX"/>
                 <outlet property="MIDIDevice" destination="EgS-Wk-5Zb" id="ZWz-Q6-FU0"/>
+                <outlet property="MIDIRefreshButton" destination="vkW-1v-ieL" id="Q8N-5o-Cq7"/>
                 <outlet property="OSCActive" destination="wYo-ks-s3A" id="sIl-Ih-rlv"/>
                 <outlet property="OSCAddrAccel" destination="qE9-OO-pLB" id="9cK-SG-bJk"/>
                 <outlet property="OSCAddrKnob" destination="aaQ-fe-Oi0" id="jY1-Qq-JE7"/>
@@ -86,7 +87,7 @@
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="OSC" identifier="1" id="wcq-ES-gpx">
-                            <view key="view" ambiguous="YES" id="ZbQ-BU-rD0">
+                            <view key="view" id="ZbQ-BU-rD0">
                                 <rect key="frame" x="10" y="33" width="224" height="288"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -190,7 +191,7 @@
                             </view>
                         </tabViewItem>
                         <tabViewItem label="MIDI" identifier="2" id="7Bf-39-fbY">
-                            <view key="view" id="MCp-S7-N0c">
+                            <view key="view" ambiguous="YES" id="MCp-S7-N0c">
                                 <rect key="frame" x="10" y="33" width="224" height="288"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -204,10 +205,13 @@
                                     </textField>
                                     <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EgS-Wk-5Zb">
                                         <rect key="frame" x="17" y="236" width="123" height="26"/>
-                                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="vpR-IE-Z6F">
+                                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="vpR-IE-Z6F">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <connections>
+                                                <action selector="selectMIDIDevice:" target="-2" id="BCT-DC-Azh"/>
+                                            </connections>
                                         </comboBoxCell>
                                     </comboBox>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qzn-kW-Hjp">
@@ -228,7 +232,7 @@
                                     </comboBox>
                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vkW-1v-ieL">
                                         <rect key="frame" x="137" y="232" width="76" height="32"/>
-                                        <buttonCell key="cell" type="push" title="Refresh" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fDt-gv-cTo">
+                                        <buttonCell key="cell" type="push" title="Refresh" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fDt-gv-cTo">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                             <connections>
@@ -246,7 +250,7 @@
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E7U-hs-7Kq">
                                         <rect key="frame" x="17" y="127" width="50" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="1" drawsBackground="YES" id="8Fx-gc-m1a">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="8Fx-gc-m1a">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="CMc-FG-RbL">
                                                 <real key="minimum" value="0.0"/>
                                                 <real key="maximum" value="127"/>
@@ -266,7 +270,7 @@
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zuu-eQ-rf6">
                                         <rect key="frame" x="17" y="72" width="50" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="2" drawsBackground="YES" id="I3H-yI-Udx">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="I3H-yI-Udx">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="LWv-jc-vTx">
                                                 <real key="minimum" value="0.0"/>
                                                 <real key="maximum" value="127"/>
@@ -286,7 +290,7 @@
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PfR-Hl-veX">
                                         <rect key="frame" x="17" y="17" width="50" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="3" drawsBackground="YES" id="Q4E-BU-msB">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Q4E-BU-msB">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="yp0-Ey-iWN">
                                                 <real key="minimum" value="0.0"/>
                                                 <real key="maximum" value="127"/>
@@ -298,7 +302,7 @@
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="poL-oP-CK8">
                                         <rect key="frame" x="157" y="17" width="50" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="5" drawsBackground="YES" id="Jqp-Ms-dJN">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Jqp-Ms-dJN">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="ZEh-s4-hSg">
                                                 <real key="minimum" value="0.0"/>
                                                 <real key="maximum" value="127"/>
@@ -310,7 +314,7 @@
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aSY-ab-ul5">
                                         <rect key="frame" x="87" y="17" width="50" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="4" drawsBackground="YES" id="QIZ-2y-yaD">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="QIZ-2y-yaD">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="fmk-rN-LRx">
                                                 <real key="minimum" value="0.0"/>
                                                 <real key="maximum" value="127"/>
