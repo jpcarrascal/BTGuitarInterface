@@ -7,10 +7,10 @@
 //
 // NOTE1:
 // Properties shoud be obtained with MIDIObjectGetIntegerProperty() and MIDIObjectGetStringProperty(),
-// but MIDIObjectGetStringProperty() is a mess in OSX
+// but MIDIObjectGetStringProperty() is a mess for OSX (maybe not so much for iOS).
 // Check:
 // http://stackoverflow.com/questions/27169807/swift-unsafemutablepointerunmanagedcfstring-allocation-and-print
-// And the solution was here:
+// And the best solution I could find is this one:
 // http://qiku.es/pregunta/78314/necesitas-ayuda-conversi%C3%B3n-cfpropertylistref-nsdictionary-a-swift-need-help-converting-cfpropertylistref-nsdictionary-to-swift
 
 
@@ -30,12 +30,11 @@ public class MIDIManager:NSObject {
     private(set) public var selectedMIDIDevice = Int()
     public var activeMIDIDeviceNames = [String]()
     
-    public init(thing:Bool = true) {
+    public init(dev:Int = -1) {
         super.init()
         getMIDIDevices()
         // -1 is the virtual MIDI port
-        setActiveMIDIDevice(-1)
-        selectedMIDIDevice = -1
+        setActiveMIDIDevice(dev)
     }
     
     public func setActiveMIDIDevice(index:Int)
@@ -48,12 +47,14 @@ public class MIDIManager:NSObject {
             destination = MIDIGetDestination(index)
         } else {
 //            MIDIClientDispose(midiClient)
-            var status = OSStatus(noErr)
             status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
             status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
             MIDISourceCreate(virtualMidiClient, "BT Guitar Port", &virtualOutputPort);
         }
         selectedMIDIDevice = index
+        if status != 0 {
+            print("Error while selecting MIDI device!")
+        }
     }
     
     public func getMIDIDevices() {
@@ -117,9 +118,7 @@ public class MIDIManager:NSObject {
         packet.data.0 = UInt8(176) + MIDIChannel-1 // Controller + channel number
         packet.data.1 = MIDIControl // Control number
         packet.data.2 = MIDIControlValue // Control value
-
         var packetList:MIDIPacketList = MIDIPacketList(numPackets: 1, packet: packet);
-
         if selectedMIDIDevice < 0 {
             return MIDIReceived(virtualOutputPort, &packetList)
         }

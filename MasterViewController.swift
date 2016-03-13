@@ -36,13 +36,24 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var MIDICCAccZ: NSTextField!
     
     private var receivedMessages = [String]()
-    private var serverAddress:String = ""
-    private var serverPort:Int = 0
     private var prevOSCValues = [Int]()
     private var prevMIDIValues = [UInt8]()
     private var deviceListNames = [String]()
     private var BTStatus = false;
-
+    private var defaults = NSDictionary(dictionary: [
+        "OSCAddress" : "127.0.0.1",
+        "OSCPort" : 6666,
+        "OSCAddrRibbon" : "/ribbon",
+        "OSCAddrKnob" : "/knob",
+        "OSCAddrAccel" : "/accel",
+        "MIDIDevice" : -1,
+        "MIDIChannel" : 1,
+        "MIDICCRibbon" : 2,
+        "MIDICCKnob" : 3,
+        "MIDICCAccX" : 4,
+        "MIDICCAccY" : 5,
+        "MIDICCAccZ" : 6
+        ])
     
     ////
     private var oscClient:OSCClient!
@@ -86,7 +97,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                             if(value != self.prevOSCValues[index]){
                                 self.oscMessage.arguments = [value]
                                 self.oscMessage.address = self.receivedMessages[index]
-                                self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.serverAddress):\(self.serverPort)")
+                                self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
                                 //print("Sent \(self.OSCAddresses[index]), \(value)")
                                 self.prevOSCValues[index] = value
                             }
@@ -100,7 +111,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             oscMessage = nil
             MIDIRefreshButton.enabled = true
             MIDIDevice.enabled = true
-            midiManager = MIDIManager()
+            midiManager = MIDIManager(dev: NSUserDefaults.standardUserDefaults().integerForKey("MIDIDevice"))
             refreshMIDIDevices(0)
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
@@ -111,8 +122,22 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                             let val:UInt8 = self.midiManager.mapRangeToMIDI(value,0,1023)
                             if(val != self.prevMIDIValues[index]){
                                 let channel = UInt8(self.MIDIChannel.integerValue)
-                                let cc = UInt8(self.MIDICCRibbon.integerValue)
-                                self.midiManager.send(channel,1,val)
+                                var cc:UInt8 = 1
+                                switch index {
+                                case 0:
+                                    cc = UInt8(self.MIDICCRibbon.integerValue)
+                                case 1:
+                                    cc = UInt8(self.MIDICCKnob.integerValue)
+                                case 2:
+                                    cc = UInt8(self.MIDICCAccX.integerValue)
+                                case 3:
+                                    cc = UInt8(self.MIDICCAccY.integerValue)
+                                case 4:
+                                    cc = UInt8(self.MIDICCAccZ.integerValue)
+                                default:
+                                    break
+                                }
+                                self.midiManager.send(channel,cc,val)
                                 self.prevMIDIValues[index] = val
                             }
                         }
@@ -141,25 +166,51 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     }
  
     @IBAction func selectMIDIDevice(sender: AnyObject) {
-        midiManager.setActiveMIDIDevice(MIDIDevice.indexOfSelectedItem-1)
+        if midiManager != nil {
+            midiManager.setActiveMIDIDevice(MIDIDevice.indexOfSelectedItem-1)
+        }
+        NSUserDefaults.standardUserDefaults().setObject(midiManager.selectedMIDIDevice, forKey: "MIDIDevice")
     }
     
-    @IBAction func refreshOSCParameters(sender: AnyObject) {
-        serverAddress = OSCAddress.stringValue
-        serverPort = OSCPort.integerValue
-        receivedMessages.removeAll()
-        receivedMessages.append(OSCAddrRibbon.stringValue)
-        receivedMessages.append(OSCAddrKnob.stringValue)
-        receivedMessages.append(OSCAddrAccel.stringValue)
+    @IBAction func refreshParameters(sender: AnyObject) {
+        let who = sender.tag()
+        switch who {
+        case 0:
+            NSUserDefaults.standardUserDefaults().setObject(OSCAddress.stringValue, forKey: "OSCAddress")
+        case 1:
+            NSUserDefaults.standardUserDefaults().setObject(OSCPort.integerValue, forKey: "OSCPort")
+        case 2:
+            NSUserDefaults.standardUserDefaults().setObject(OSCAddrRibbon.stringValue, forKey: "OSCAddrRibbon")
+        case 3:
+            NSUserDefaults.standardUserDefaults().setObject(OSCAddrKnob.stringValue, forKey: "OSCAddrKnob")
+        case 4:
+            NSUserDefaults.standardUserDefaults().setObject(OSCAddrAccel.stringValue, forKey: "OSCAddrAccel")
+        case 5:
+            NSUserDefaults.standardUserDefaults().setObject(MIDIDevice.integerValue, forKey: "MIDIDevice")
+        case 6:
+            NSUserDefaults.standardUserDefaults().setObject(MIDIChannel.integerValue, forKey: "MIDIChannel")
+        case 7:
+            NSUserDefaults.standardUserDefaults().setObject(MIDICCRibbon.integerValue, forKey: "MIDICCRibbon")
+        case 8:
+            NSUserDefaults.standardUserDefaults().setObject(MIDICCKnob.integerValue, forKey: "MIDICCKnob")
+        case 9:
+            NSUserDefaults.standardUserDefaults().setObject(MIDICCAccX.integerValue, forKey: "MIDICCAccX")
+        case 10:
+            NSUserDefaults.standardUserDefaults().setObject(MIDICCAccY.integerValue, forKey: "MIDICCAccY")
+        case 11:
+            NSUserDefaults.standardUserDefaults().setObject(MIDICCAccZ.integerValue, forKey: "MIDICCAccZ")
+        default: break
+        }
+//        receivedMessages.removeAll()
+//        receivedMessages.append(OSCAddrRibbon.stringValue)
+//        receivedMessages.append(OSCAddrKnob.stringValue)
+//        receivedMessages.append(OSCAddrAccel.stringValue)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        ////
         scanProgress.startAnimation(nil)
-        serverAddress = OSCAddress.stringValue
-        serverPort = OSCPort.integerValue
         receivedMessages.append(OSCAddrRibbon.stringValue)
         receivedMessages.append(OSCAddrKnob.stringValue)
         receivedMessages.append(OSCAddrAccel.stringValue)
@@ -194,32 +245,26 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         BTConnectText.enabled = false
         MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
         MIDIChannel.selectItemAtIndex(0)
-
-  /*
-        
-//        private var availableDevices = MIKMIDIDeviceManager.sharedDeviceManager().availableDevices
-//        NSArray *availableMIDIDevices = [[MIKMIDIDeviceManager sharedDeviceManager] availableDevices];
-        
-        
-        var date = NSDate().timeIntervalSince1970
-//        var noteOn = MIKMIDINoteOnCommand(note: 60, velocity: 127, channel: 0, timestamp: date)
-//        var noteOff = MIKMIDINoteOnCommand(note: 60, velocity: 127, channel: 0, timestamp: date)
-        
-        
-        let msg = MIDIChannelMessage(status: 1, data1: 2, data2: 3, reserved: 0)
-        let cc = MIKMIDIControlChangeCommand(forCommandType: MIKMIDICommandType)
-
-        var dest = MIKMIDIDestinationEndpoint()
-        var dm = MIKMIDIDeviceManager.sharedDeviceManager()
-        dm.sendCommands([cc], toEndpoint: MIKMIDIDestinationEndpoint)
-            sendCommands([cc], toEndpoint: dest)
-        
-//        [dm sendCommands:@[noteOn, noteOff] toEndpoint:destinationEndpoint error:&error];
-*/
+        NSUserDefaults.standardUserDefaults().registerDefaults(defaults as! [String : AnyObject])
+        loadUserData()
+    }
+    
+    func loadUserData() {
+        OSCAddress.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddress")!
+        OSCPort.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("OSCPort")
+        OSCAddrRibbon.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddrRibbon")!
+        OSCAddrKnob.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddrKnob")!
+        OSCAddrAccel.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddrAccel")!
+        MIDIChannel.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDIChannel")
+        MIDICCRibbon.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCRibbon")
+        MIDICCKnob.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCKnob")
+        MIDICCAccX.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccX")
+        MIDICCAccY.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccY")
+        MIDICCAccZ.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccZ")
     }
     
     override func awakeFromNib() {
 
     }
-
+    
 }
