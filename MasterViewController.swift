@@ -20,6 +20,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var BTIndicator: NSImageView!
     @IBOutlet weak var OSCActive: NSButton!
     @IBOutlet weak var MIDIActive: NSButton!
+    @IBOutlet weak var noneActive: NSButton!
     @IBOutlet weak var OSCAddress: NSTextField!
     @IBOutlet weak var OSCPort: NSTextField!
     @IBOutlet weak var OSCAddrRibbon: NSTextField!
@@ -70,7 +71,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     }
 */  
     @IBAction func selectOutputProtocol(sender: AnyObject) {
-        if OSCActive.intValue == 1 {
+        if OSCActive.intValue == 1 && oscClient == nil {
             midiManager = nil
             MIDIRefreshButton.enabled = false
             MIDIDevice.enabled = false
@@ -94,7 +95,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
             print("Using OSC")
-        } else if MIDIActive.intValue == 1 {
+        } else if MIDIActive.intValue == 1 && midiManager == nil {
             oscClient = nil
             oscMessage = nil
             MIDIRefreshButton.enabled = true
@@ -119,7 +120,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
             print("Using MIDI")
-        } else {
+        } else if noneActive.intValue == 1 {
             oscClient = nil
             oscMessage = nil
             midiManager = nil

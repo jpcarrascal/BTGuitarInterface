@@ -25,6 +25,7 @@
                 <outlet property="OSCAddrRibbon" destination="nVF-Bw-nJX" id="TjW-nY-cfe"/>
                 <outlet property="OSCAddress" destination="PCl-Tg-0n2" id="vyr-Jm-7Ve"/>
                 <outlet property="OSCPort" destination="DJc-X0-npD" id="eBq-0r-6ay"/>
+                <outlet property="noneActive" destination="7Wu-Pq-kjx" id="LvD-IK-ZwS"/>
                 <outlet property="outputSelect" destination="wcq-ES-gpx" id="hn8-02-7Mi"/>
                 <outlet property="scanProgress" destination="f9J-rY-9jV" id="02J-KG-6Th"/>
                 <outlet property="scanText" destination="SXg-6q-2Sw" id="8Uw-C6-G8L"/>
