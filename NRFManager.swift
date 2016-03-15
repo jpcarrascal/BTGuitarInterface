@@ -49,8 +49,8 @@ public class NRFManager:NSObject, CBCentralManagerDelegate, UARTPeripheralDelega
     public var verbose = false
     public var autoConnect = true
     public var delegate:NRFManagerDelegate?
-    // JP: Define name of device to connect:
-    public var RFDuinoName = "JPGuit"
+    // JP: Name of device to connect:
+    public var deviceName:String = "RFDuino"
 
     //callbacks
     public var connectionCallback:(()->())?
@@ -87,8 +87,8 @@ public class NRFManager:NSObject, CBCentralManagerDelegate, UARTPeripheralDelega
         }
         return Static.instance
     }
- 
-    public init(delegate:NRFManagerDelegate? = nil, onConnect connectionCallback:(()->())? = nil, onDisconnect disconnectionCallback:(()->())? = nil, onData dataCallback:((data:NSData?, string:String?)->())? = nil, autoConnect:Bool = true)
+    // JP: Added a parameter for selecting the name of the device to connect to (deviceName:String)
+    public init(delegate:NRFManagerDelegate? = nil, onConnect connectionCallback:(()->())? = nil, onDisconnect disconnectionCallback:(()->())? = nil, onData dataCallback:((data:NSData?, string:String?)->())? = nil, deviceName:String = "RFDuino", autoConnect:Bool = true)
     {
         super.init()
         self.delegate = delegate
@@ -97,6 +97,7 @@ public class NRFManager:NSObject, CBCentralManagerDelegate, UARTPeripheralDelega
         self.connectionCallback = connectionCallback
         self.disconnectionCallback = disconnectionCallback
         self.dataCallback = dataCallback
+        self.deviceName = deviceName
     }
     
 }
@@ -218,7 +219,7 @@ extension NRFManager {
                 JP:
                 Connect only if desired device is found:
             */
-            if peripheral.name == RFDuinoName {
+            if peripheral.name == deviceName {
                 log("Did discover peripheral: \(peripheral.name)")
                 bluetoothManager.stopScan()
                 connectPeripheral(peripheral)
