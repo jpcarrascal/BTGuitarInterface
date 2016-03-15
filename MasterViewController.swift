@@ -11,9 +11,9 @@ import OSCKit
 import IOBluetooth
 
 ////class MasterViewController: NSViewController {
-class MasterViewController: NSViewController, NRFManagerDelegate {
+class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDelegate {
 
-    @IBOutlet weak var outputSelect: NSTabViewItem!
+    @IBOutlet weak var outputTabBar: NSTabView!
     @IBOutlet weak var scanProgress: NSProgressIndicator!
     @IBOutlet weak var scanText: NSTextField!
     @IBOutlet weak var BTConnectText: NSButton!
@@ -23,9 +23,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var noneActive: NSButton!
     @IBOutlet weak var OSCAddress: NSTextField!
     @IBOutlet weak var OSCPort: NSTextField!
-    @IBOutlet weak var OSCAddrRibbon: NSTextField!
-    @IBOutlet weak var OSCAddrKnob: NSTextField!
-    @IBOutlet weak var OSCAddrAccel: NSTextField!
+    
+    @IBOutlet weak var OSCMappingTable: NSTableView!
+    @IBOutlet weak var MIDIMappingTable: NSTableView!
+    
+    @IBOutlet weak var msgAddrRibbon: NSTextField!
+    @IBOutlet weak var msgAddrKnob: NSTextField!
+    @IBOutlet weak var msgAddrAccel: NSTextField!
     @IBOutlet weak var MIDIRefreshButton: NSButton!
     @IBOutlet weak var MIDIDevice: NSComboBox!
     @IBOutlet weak var MIDIChannel: NSComboBox!
@@ -35,24 +39,31 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
     @IBOutlet weak var MIDICCAccY: NSTextField!
     @IBOutlet weak var MIDICCAccZ: NSTextField!
     
-    private var receivedMessages = [String]()
+    private var outputSelect: String = ""
+    private var inputDataCount: Int = 0
+    private var mappings = [[String : String]]()
+    private var MIDIMappings = [[Int : Int]]()
     private var prevOSCValues = [Int]()
     private var prevMIDIValues = [UInt8]()
     private var deviceListNames = [String]()
     private var BTStatus = false;
     private var defaults = NSDictionary(dictionary: [
+        "outputSelect" : "None",
         "OSCAddress" : "127.0.0.1",
         "OSCPort" : 6666,
-        "OSCAddrRibbon" : "/ribbon",
-        "OSCAddrKnob" : "/knob",
-        "OSCAddrAccel" : "/accel",
+        "msgAddrRibbon" : "/ribbon",
+        "msgAddrKnob" : "/knob",
+        "msgAddrAccel" : "/accel",
         "MIDIDevice" : -1,
         "MIDIChannel" : 1,
         "MIDICCRibbon" : 2,
         "MIDICCKnob" : 3,
         "MIDICCAccX" : 4,
         "MIDICCAccY" : 5,
-        "MIDICCAccZ" : 6
+        "MIDICCAccZ" : 6,
+        "OSCMappings" : ["/ribbon","/knob","/accelx","/accely","/accelz","","",""],
+        "MIDIMappings" : [2,3,4,5,6,7,8,9],
+        "Mappings" : [["msgAddress": "/a", "Position": "1", "cc": "1", "status": "0"], ["msgAddress": "/b", "Position": "2", "cc": "2", "status": "0"], ["msgAddress": "/c", "Position": "3", "cc": "3", "status": "0"]]
         ])
     
     ////
@@ -80,7 +91,8 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             print("invalid url")
         }
     }
-*/  
+*/
+
     @IBAction func selectOutputProtocol(sender: AnyObject) {
         if OSCActive.intValue == 1 && oscClient == nil {
             midiManager = nil
@@ -92,13 +104,21 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 (data:NSData?, string:String?)->() in
                 if let dataString = string {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    for index in 0...(self.receivedMessages.count-1) {
+                    if self.inputDataCount != dataArray.count {
+                        self.mappings.removeAll()
+                        self.inputDataCount = dataArray.count
+                        self.updateMappings(self.inputDataCount)
+                        self.prevOSCValues.removeAll()
+                        for _ in 0...(dataArray.count-1) {
+                            self.prevOSCValues.append(0)
+                        }
+                    }
+                    for index in 0...(dataArray.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             if(value != self.prevOSCValues[index]){
                                 self.oscMessage.arguments = [value]
-                                self.oscMessage.address = self.receivedMessages[index]
+                                self.oscMessage.address = self.mappings[index]["msgAddress"]!
                                 self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
-                                //print("Sent \(self.OSCAddresses[index]), \(value)")
                                 self.prevOSCValues[index] = value
                             }
                         }
@@ -106,6 +126,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
             print("Using OSC")
+            outputTabBar.selectFirstTabViewItem(0)
+            outputSelect = "OSC"
+            NSUserDefaults.standardUserDefaults().setObject(outputSelect, forKey: "outputSelect")
         } else if MIDIActive.intValue == 1 && midiManager == nil {
             oscClient = nil
             oscMessage = nil
@@ -117,27 +140,21 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 (data:NSData?, string:String?)->() in
                 if let dataString = string {
                     let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    for index in 0...(self.receivedMessages.count-1) {
+                    if self.inputDataCount != dataArray.count {
+                        self.inputDataCount = dataArray.count
+                        self.updateMappings(self.inputDataCount)
+                        self.prevMIDIValues.removeAll()
+                        for _ in 0...(dataArray.count-1) {
+                            self.prevMIDIValues.append(0)
+                        }
+                    }
+                    for index in 0...(dataArray.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             let val:UInt8 = self.midiManager.mapRangeToMIDI(value,0,1023)
                             if(val != self.prevMIDIValues[index]){
                                 let channel = UInt8(self.MIDIChannel.integerValue)
-                                var cc:UInt8 = 1
-                                switch index {
-                                case 0:
-                                    cc = UInt8(self.MIDICCRibbon.integerValue)
-                                case 1:
-                                    cc = UInt8(self.MIDICCKnob.integerValue)
-                                case 2:
-                                    cc = UInt8(self.MIDICCAccX.integerValue)
-                                case 3:
-                                    cc = UInt8(self.MIDICCAccY.integerValue)
-                                case 4:
-                                    cc = UInt8(self.MIDICCAccZ.integerValue)
-                                default:
-                                    break
-                                }
-                                self.midiManager.send(channel,cc,val)
+                                let cc = UInt8(self.mappings[index]["cc"]!)
+                                self.midiManager.send(channel,cc!,val)
                                 self.prevMIDIValues[index] = val
                             }
                         }
@@ -145,6 +162,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
                 }
             }
             print("Using MIDI")
+            outputTabBar.selectLastTabViewItem(0)
+            outputSelect = "MIDI"
+            NSUserDefaults.standardUserDefaults().setObject(outputSelect, forKey: "outputSelect")
         } else if noneActive.intValue == 1 {
             oscClient = nil
             oscMessage = nil
@@ -153,7 +173,10 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             MIDIDevice.enabled = false
             nrfManager.dataCallback = nil
             print("Enjoy the silence...")
+            outputSelect = "None"
+            NSUserDefaults.standardUserDefaults().setObject(outputSelect, forKey: "outputSelect")
         }
+        OSCMappingTable.reloadData()
     }
     
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
@@ -180,11 +203,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         case 1:
             NSUserDefaults.standardUserDefaults().setObject(OSCPort.integerValue, forKey: "OSCPort")
         case 2:
-            NSUserDefaults.standardUserDefaults().setObject(OSCAddrRibbon.stringValue, forKey: "OSCAddrRibbon")
+            NSUserDefaults.standardUserDefaults().setObject(msgAddrRibbon.stringValue, forKey: "msgAddrRibbon")
         case 3:
-            NSUserDefaults.standardUserDefaults().setObject(OSCAddrKnob.stringValue, forKey: "OSCAddrKnob")
+            NSUserDefaults.standardUserDefaults().setObject(msgAddrKnob.stringValue, forKey: "msgAddrKnob")
         case 4:
-            NSUserDefaults.standardUserDefaults().setObject(OSCAddrAccel.stringValue, forKey: "OSCAddrAccel")
+            NSUserDefaults.standardUserDefaults().setObject(msgAddrAccel.stringValue, forKey: "msgAddrAccel")
         case 5:
             NSUserDefaults.standardUserDefaults().setObject(MIDIDevice.integerValue, forKey: "MIDIDevice")
         case 6:
@@ -199,23 +222,21 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
             NSUserDefaults.standardUserDefaults().setObject(MIDICCAccY.integerValue, forKey: "MIDICCAccY")
         case 11:
             NSUserDefaults.standardUserDefaults().setObject(MIDICCAccZ.integerValue, forKey: "MIDICCAccZ")
-        default: break
+        default:
+            break
         }
-//        receivedMessages.removeAll()
-//        receivedMessages.append(OSCAddrRibbon.stringValue)
-//        receivedMessages.append(OSCAddrKnob.stringValue)
-//        receivedMessages.append(OSCAddrAccel.stringValue)
+        NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
+//        NSUserDefaults.standardUserDefaults().setObject(["/ribbon","/knob","/accelx","/accely","/accelz","","",""], forKey: "OSCMappings")
+//        NSUserDefaults.standardUserDefaults().setObject([2,3,4,5,6,7,8,9], forKey: "MIDIMappings")
+
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
         scanProgress.startAnimation(nil)
-        receivedMessages.append(OSCAddrRibbon.stringValue)
-        receivedMessages.append(OSCAddrKnob.stringValue)
-        receivedMessages.append(OSCAddrAccel.stringValue)
-        prevOSCValues = [0,0,0]
-        prevMIDIValues = [0,0,0]
+        prevOSCValues = [0,0,0,0,0,0,0,0]
+        prevMIDIValues = [0,0,0,0,0,0,0,0]
         
         nrfManager = NRFManager(
             onConnect: {
@@ -247,14 +268,29 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         MIDIChannel.selectItemAtIndex(0)
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults as! [String : AnyObject])
         loadUserData()
+        if outputSelect == "OSC" {
+            OSCActive.intValue = 1
+            outputTabBar.selectFirstTabViewItem(0)
+        } else if outputSelect == "MIDI" {
+            MIDIActive.intValue = 1
+            outputTabBar.selectLastTabViewItem(0)
+        } else {
+            noneActive.intValue = 1
+            outputTabBar.selectFirstTabViewItem(0)
+        }
+        selectOutputProtocol(0)
+        updateMappings(3)
+        OSCMappingTable.setDelegate(self)
+        OSCMappingTable.setDataSource(self)
     }
     
     func loadUserData() {
+        outputSelect = NSUserDefaults.standardUserDefaults().stringForKey("outputSelect")!
         OSCAddress.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddress")!
         OSCPort.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("OSCPort")
-        OSCAddrRibbon.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddrRibbon")!
-        OSCAddrKnob.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddrKnob")!
-        OSCAddrAccel.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddrAccel")!
+        msgAddrRibbon.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("msgAddrRibbon")!
+        msgAddrKnob.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("msgAddrKnob")!
+        msgAddrAccel.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("msgAddrAccel")!
         MIDIChannel.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDIChannel")
         MIDICCRibbon.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCRibbon")
         MIDICCKnob.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCKnob")
@@ -262,9 +298,84 @@ class MasterViewController: NSViewController, NRFManagerDelegate {
         MIDICCAccY.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccY")
         MIDICCAccZ.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccZ")
     }
-    
-    override func awakeFromNib() {
 
+
+    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        
+        var image:NSImage?
+        var text:String = ""
+        var cellIdentifier: String = ""
+        // 1
+        let item = mappings[row]
+        if tableColumn == tableView.tableColumns[0] {
+            if item["status"] == "0" {
+                image = NSImage(named: "NSStatusNone")
+            } else {
+                image = NSImage(named: "NSStatusAvailable")
+            }
+            cellIdentifier = "inputCellID"
+        } else if tableColumn == tableView.tableColumns[1] {
+            text = item["Position"]!
+            cellIdentifier = "positionCellID"
+        } else if tableColumn == tableView.tableColumns[2] {
+            if outputSelect == "OSC" {
+                text = item["msgAddress"]!
+            } else if outputSelect == "MIDI" {
+                text = item["cc"]!
+            } else {
+                text = item[""]!
+            }
+            cellIdentifier = "destinationCellID"
+        }
+        // 3
+        if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+            cell.textField?.stringValue = text
+            cell.imageView?.image = image ?? nil
+            return cell
+        }
+        return nil
     }
     
+
+    func updateMappings(datacount: Int) {
+/*        if let OSCvalues = NSUserDefaults.standardUserDefaults().arrayForKey("OSCMappings"),
+               MIDIvalues = NSUserDefaults.standardUserDefaults().arrayForKey("MIDIMappings") {
+            if datacount > 0 {
+                for i in 0...datacount-1 {
+                    let data = ["Position": String(i+1), "msgAddress":String(OSCvalues[i]),
+                        "cc":String(MIDIvalues[i]), "status": "0"]
+                    mappings.append(data)
+                }
+            }
+        }
+*/
+        mappings = (NSUserDefaults.standardUserDefaults().objectForKey("Mappings") as? [[String: String]])!
+        // If more messages are received, pad the mappings table with empty rows:
+        if datacount > mappings.count {
+            var maxcc = 1
+            for item in mappings {
+                let curcc = Int(item["cc"]!)
+                if  curcc > maxcc {
+                    maxcc = curcc!
+                }
+            }
+            let mapcount = mappings.count
+            for i in mapcount...(datacount-1) {
+                let data = ["Position": String(i+1), "msgAddress":"",
+                    "cc":String(maxcc+i-mapcount+1), "status": "0"]
+                mappings.append(data)
+            }
+        }
+        print(mappings.count)
+        print(datacount)
+        OSCMappingTable.reloadData()
+    }
+    
+}
+
+extension MasterViewController : NSTableViewDataSource {
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+        //return directoryItems?.count ?? 0
+        return mappings.count
+    }
 }
