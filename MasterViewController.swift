@@ -202,30 +202,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             NSUserDefaults.standardUserDefaults().setObject(OSCAddress.stringValue, forKey: "OSCAddress")
         case 1:
             NSUserDefaults.standardUserDefaults().setObject(OSCPort.integerValue, forKey: "OSCPort")
-        case 2:
-            NSUserDefaults.standardUserDefaults().setObject(msgAddrRibbon.stringValue, forKey: "msgAddrRibbon")
-        case 3:
-            NSUserDefaults.standardUserDefaults().setObject(msgAddrKnob.stringValue, forKey: "msgAddrKnob")
-        case 4:
-            NSUserDefaults.standardUserDefaults().setObject(msgAddrAccel.stringValue, forKey: "msgAddrAccel")
         case 5:
             NSUserDefaults.standardUserDefaults().setObject(MIDIDevice.integerValue, forKey: "MIDIDevice")
         case 6:
             NSUserDefaults.standardUserDefaults().setObject(MIDIChannel.integerValue, forKey: "MIDIChannel")
-        case 7:
-            NSUserDefaults.standardUserDefaults().setObject(MIDICCRibbon.integerValue, forKey: "MIDICCRibbon")
-        case 8:
-            NSUserDefaults.standardUserDefaults().setObject(MIDICCKnob.integerValue, forKey: "MIDICCKnob")
-        case 9:
-            NSUserDefaults.standardUserDefaults().setObject(MIDICCAccX.integerValue, forKey: "MIDICCAccX")
-        case 10:
-            NSUserDefaults.standardUserDefaults().setObject(MIDICCAccY.integerValue, forKey: "MIDICCAccY")
-        case 11:
-            NSUserDefaults.standardUserDefaults().setObject(MIDICCAccZ.integerValue, forKey: "MIDICCAccZ")
         default:
-            break
+            NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
         }
-        NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
 //        NSUserDefaults.standardUserDefaults().setObject(["/ribbon","/knob","/accelx","/accely","/accelz","","",""], forKey: "OSCMappings")
 //        NSUserDefaults.standardUserDefaults().setObject([2,3,4,5,6,7,8,9], forKey: "MIDIMappings")
 
@@ -288,15 +271,8 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         outputSelect = NSUserDefaults.standardUserDefaults().stringForKey("outputSelect")!
         OSCAddress.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddress")!
         OSCPort.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("OSCPort")
-        msgAddrRibbon.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("msgAddrRibbon")!
-        msgAddrKnob.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("msgAddrKnob")!
-        msgAddrAccel.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("msgAddrAccel")!
+        // MIDI port is not here as it is recovered after scan
         MIDIChannel.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDIChannel")
-        MIDICCRibbon.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCRibbon")
-        MIDICCKnob.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCKnob")
-        MIDICCAccX.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccX")
-        MIDICCAccY.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccY")
-        MIDICCAccZ.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDICCAccZ")
     }
 
 
