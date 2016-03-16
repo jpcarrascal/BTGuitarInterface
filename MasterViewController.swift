@@ -25,8 +25,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     @IBOutlet weak var OSCAddress: NSTextField!
     @IBOutlet weak var OSCPort: NSTextField!
     
-    @IBOutlet weak var OSCMappingTable: NSTableView!
-    @IBOutlet weak var MIDIMappingTable: NSTableView!
+    @IBOutlet weak var mappingTableView: NSTableView!
     
     @IBOutlet weak var MIDIRefreshButton: NSButton!
     @IBOutlet weak var MIDIDevice: NSComboBox!
@@ -65,17 +64,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             self.nrfManager.connect()
         }
     }
-    
-/*    @IBAction func about(sender: AnyObject) {
-        if let checkURL = NSURL(string: "//www.spacebarman.com") {
-            if NSWorkspace.sharedWorkspace().openURL(checkURL) {
-                print("url successfully opened")
-            }
-        } else {
-            print("invalid url")
-        }
-    }
-*/
 
     @IBAction func selectOutputProtocol(sender: AnyObject) {
         if OSCActive.intValue == 1 && oscClient == nil {
@@ -100,10 +88,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
                     for index in 0...(dataArray.count-1) {
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             if(value != self.prevOSCValues[index]){
+                                self.activityLed(index, true)
                                 self.oscMessage.arguments = [value]
                                 self.oscMessage.address = self.mappings[index]["msgAddress"]!
                                 self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
                                 self.prevOSCValues[index] = value
+                            } else {
+                                self.activityLed(index, false)
                             }
                         }
                     }
@@ -136,10 +127,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
                         if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             let val:UInt8 = self.midiManager.mapRangeToMIDI(value,0,1023)
                             if(val != self.prevMIDIValues[index]){
+                                self.activityLed(index, true)
                                 let channel = UInt8(self.MIDIChannel.integerValue)
                                 let cc = UInt8(self.mappings[index]["cc"]!)
                                 self.midiManager.send(channel,cc!,val)
                                 self.prevMIDIValues[index] = val
+                            } else {
+                                self.activityLed(index, false)
                             }
                         }
                     }
@@ -160,7 +154,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             outputSelect = "None"
             NSUserDefaults.standardUserDefaults().setObject(outputSelect, forKey: "outputSelect")
         }
-        OSCMappingTable.reloadData()
+        mappingTableView.reloadData()
     }
     
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
@@ -253,8 +247,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         MIDIChannel.selectItemAtIndex(0)
         selectOutputProtocol(0)
         updateMappings(3)
-        OSCMappingTable.setDelegate(self)
-        OSCMappingTable.setDataSource(self)
+        mappingTableView.setDelegate(self)
+        mappingTableView.setDataSource(self)
+        print(NSUserDefaults.standardUserDefaults().arrayForKey("NSTableView Columns OSC Messages"))
     }
     
     func loadUserData() {
@@ -289,15 +284,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
                 text = item["msgAddress"]!
             } else if outputSelect == "MIDI" {
                 text = item["cc"]!
-            } else {
-                text = item[""]!
             }
             cellIdentifier = "destinationCellID"
         }
         // 3
         if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
-            cell.textField?.stringValue = text
             cell.imageView?.image = image ?? nil
+            cell.textField?.stringValue = text
             return cell
         }
         return nil
@@ -333,10 +326,34 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
                 mappings.append(data)
             }
         }
-        print(mappings.count)
-        print(datacount)
-        OSCMappingTable.reloadData()
+//        print(mappings)
+        mappingTableView.reloadData()
     }
+
+    func tableViewSelectionDidChange(notification: NSNotification) {
+        var mySelectedRows = [Int]()
+        let myTableViewFromNotification = notification.object as! NSTableView
+        // In this example, the TableView allows multiple selection
+        let indexes = myTableViewFromNotification.selectedRowIndexes
+        var index = indexes.firstIndex
+        while index != NSNotFound {
+            mySelectedRows.append(index)
+            index = indexes.indexGreaterThanIndex(index)
+        }
+        print(mySelectedRows)
+    }
+    
+    func activityLed(index:Int, _ status:Bool) {
+        if status {
+            self.mappings[index]["status"] = "1"
+        } else {
+            self.mappings[index]["status"] = "0"
+        }
+        self.mappingTableView.beginUpdates()
+        self.mappingTableView.reloadDataForRowIndexes(NSIndexSet(index: index), columnIndexes: NSIndexSet(index: 0))
+        self.mappingTableView.endUpdates()
+    }
+    
     
 }
 

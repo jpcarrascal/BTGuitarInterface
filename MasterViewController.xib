@@ -16,9 +16,9 @@
                 <outlet property="MIDIRefreshButton" destination="vkW-1v-ieL" id="Q8N-5o-Cq7"/>
                 <outlet property="OSCActive" destination="wYo-ks-s3A" id="sIl-Ih-rlv"/>
                 <outlet property="OSCAddress" destination="PCl-Tg-0n2" id="vyr-Jm-7Ve"/>
-                <outlet property="OSCMappingTable" destination="OTW-aL-wjE" id="TTH-yo-QlX"/>
                 <outlet property="OSCPort" destination="DJc-X0-npD" id="eBq-0r-6ay"/>
                 <outlet property="deviceName" destination="d7o-ea-MDm" id="p42-Zc-Led"/>
+                <outlet property="mappingTableView" destination="OTW-aL-wjE" id="Jat-5m-eJ2"/>
                 <outlet property="noneActive" destination="7Wu-Pq-kjx" id="LvD-IK-ZwS"/>
                 <outlet property="outputSelect" destination="wcq-ES-gpx" id="hn8-02-7Mi"/>
                 <outlet property="outputTabBar" destination="1Z0-p0-5zC" id="Tds-cM-OtG"/>
@@ -94,12 +94,12 @@
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="OSC" identifier="1" id="wcq-ES-gpx">
-                            <view key="view" id="ZbQ-BU-rD0">
-                                <rect key="frame" x="10" y="7" width="218" height="112"/>
+                            <view key="view" ambiguous="YES" id="ZbQ-BU-rD0">
+                                <rect key="frame" x="10" y="7" width="0.0" height="0.0"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YAR-LH-NqE">
-                                        <rect key="frame" x="12" y="91" width="140" height="17"/>
+                                        <rect key="frame" x="12" y="-21" width="140" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Destination IP address" id="1h3-Rv-kOY">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -107,7 +107,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="PCl-Tg-0n2">
-                                        <rect key="frame" x="14" y="61" width="190" height="22"/>
+                                        <rect key="frame" x="14" y="-51" width="190" height="22"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="127.0.0.1" drawsBackground="YES" id="MbT-1j-cDD">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -118,7 +118,7 @@
                                         </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="DJc-X0-npD">
-                                        <rect key="frame" x="14" y="6" width="190" height="22"/>
+                                        <rect key="frame" x="14" y="-106" width="190" height="22"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Pew-zi-cGD">
                                             <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" allowsFloats="NO" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="upB-MS-QAc"/>
                                             <font key="font" metaFont="system"/>
@@ -130,7 +130,7 @@
                                         </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CbS-mS-vPH">
-                                        <rect key="frame" x="12" y="-19" width="115" height="17"/>
+                                        <rect key="frame" x="12" y="-131" width="115" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Message mapping" id="loX-sj-JyD">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -138,7 +138,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iGs-V7-BSx">
-                                        <rect key="frame" x="12" y="36" width="61" height="17"/>
+                                        <rect key="frame" x="12" y="-76" width="61" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="UDP port" id="aAh-1x-nXR">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -149,7 +149,7 @@
                             </view>
                         </tabViewItem>
                         <tabViewItem label="MIDI" identifier="2" id="7Bf-39-fbY">
-                            <view key="view" ambiguous="YES" id="MCp-S7-N0c">
+                            <view key="view" id="MCp-S7-N0c">
                                 <rect key="frame" x="10" y="7" width="218" height="112"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
