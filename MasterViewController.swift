@@ -34,7 +34,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     private var outputSelect: String = ""
     private var inputDataCount: Int = 0
     private var mappings = [[String : String]]()
-    private var MIDIMappings = [[Int : Int]]()
     private var prevOSCValues = [Int]()
     private var prevMIDIValues = [UInt8]()
     private var deviceListNames = [String]()
@@ -195,6 +194,8 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         }
 // Fix this:
         NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
+        //print(NSUserDefaults.standardUserDefaults().arrayForKey("Mappings"))
+
     }
     
     override func viewDidLoad() {
@@ -249,7 +250,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         updateMappings(3)
         mappingTableView.setDelegate(self)
         mappingTableView.setDataSource(self)
-        print(NSUserDefaults.standardUserDefaults().arrayForKey("NSTableView Columns OSC Messages"))
     }
     
     func loadUserData() {
@@ -275,7 +275,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             } else {
                 image = NSImage(named: "NSStatusAvailable")
             }
-            cellIdentifier = "inputCellID"
+            cellIdentifier = "activityCellID"
         } else if tableColumn == tableView.tableColumns[1] {
             text = item["Position"]!
             cellIdentifier = "positionCellID"
@@ -298,17 +298,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     
 
     func updateMappings(datacount: Int) {
-/*        if let OSCvalues = NSUserDefaults.standardUserDefaults().arrayForKey("OSCMappings"),
-               MIDIvalues = NSUserDefaults.standardUserDefaults().arrayForKey("MIDIMappings") {
-            if datacount > 0 {
-                for i in 0...datacount-1 {
-                    let data = ["Position": String(i+1), "msgAddress":String(OSCvalues[i]),
-                        "cc":String(MIDIvalues[i]), "status": "0"]
-                    mappings.append(data)
-                }
-            }
-        }
-*/
         mappings = (NSUserDefaults.standardUserDefaults().objectForKey("Mappings") as? [[String: String]])!
         // If more messages are received, pad the mappings table with empty rows:
         if datacount > mappings.count {

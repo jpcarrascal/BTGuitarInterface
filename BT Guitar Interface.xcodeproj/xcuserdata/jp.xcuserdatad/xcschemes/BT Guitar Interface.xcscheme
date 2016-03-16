@@ -17,7 +17,7 @@
                BlueprintIdentifier = "E8E1C0971C8BC37C00075EED"
                BuildableName = "BT Guitar Interface.app"
                BlueprintName = "BT Guitar Interface"
-               ReferencedContainer = "container:BT Guitar Interface.xcodeproj">
+               ReferencedContainer = "container:RFDuino Receiver.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -77,7 +77,7 @@
             BlueprintIdentifier = "E8E1C0971C8BC37C00075EED"
             BuildableName = "BT Guitar Interface.app"
             BlueprintName = "BT Guitar Interface"
-            ReferencedContainer = "container:BT Guitar Interface.xcodeproj">
+            ReferencedContainer = "container:RFDuino Receiver.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

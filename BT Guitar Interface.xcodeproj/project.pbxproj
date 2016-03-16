@@ -15,7 +15,6 @@
 		E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09F1C8BC37C00075EED /* MainMenu.xib */; };
 		E8E1C0AA1C8BCCD300075EED /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */; };
 		E8E1C0AB1C8BCCD300075EED /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */; };
-		E8ED35A71C951ACE00B9C1A9 /* BTGuit.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8ED35A61C951ACE00B9C1A9 /* BTGuit.plist */; };
 		FBD6EF4B8267A048F6BAFEFC /* Pods_BT_Guitar_Interface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */; };
 /* End PBXBuildFile section */
 
@@ -32,7 +31,6 @@
 		E8E1C0A21C8BC37C00075EED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MasterViewController.xib; sourceTree = "<group>"; };
-		E8ED35A61C951ACE00B9C1A9 /* BTGuit.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = BTGuit.plist; sourceTree = "<group>"; };
 		F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.release.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,7 +71,6 @@
 				E89A09211C8F94E1009AD1A9 /* NRFManager.swift */,
 				E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */,
 				E89A09231C8FE099009AD1A9 /* README.md */,
-				E8ED35A61C951ACE00B9C1A9 /* BTGuit.plist */,
 				E8E1C09A1C8BC37C00075EED /* BT Guitar Interface */,
 				E8E1C0991C8BC37C00075EED /* Products */,
 				7DA4552F2B97B91A13809F32 /* Pods */,
@@ -162,7 +159,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */,
-				E8ED35A71C951ACE00B9C1A9 /* BTGuit.plist in Resources */,
 				E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */,
 				E8E1C0AB1C8BCCD300075EED /* MasterViewController.xib in Resources */,
 			);
