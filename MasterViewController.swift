@@ -10,7 +10,6 @@ import Cocoa
 import OSCKit
 import IOBluetooth
 
-////class MasterViewController: NSViewController {
 class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
 
     @IBOutlet weak var deviceName: NSTextField!
@@ -183,7 +182,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     
     @IBAction func refreshParameters(sender: AnyObject) {
         let who = sender.tag()
-//        NSNotificationCenter.defaultCenter().postNotificationName(saveNotificationKey, object: self)
         switch who {
         case 0:
             nrfManager.deviceName = deviceName.stringValue
@@ -203,8 +201,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
         }
 //        NSUserDefaults.standardUserDefaults().synchronize()
-// Fix this:
-        //print(NSUserDefaults.standardUserDefaults().arrayForKey("Mappings"))
     }
     
     func saveTable(sender:AnyObject) {
@@ -214,11 +210,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         let col:String = cellData["col"] as! String
         let val:String = cellData["val"] as! String
         mappings[row][col] = val
-        print(mappings)
-        print("\(row), \(col), \(val)")
         mappingTableView.reloadData()
         NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
-        print("Table saved!")
+        print("Table saved.")
     }
     
     override func viewDidLoad() {
@@ -233,9 +227,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         if outputSelect == "OSC" {
             OSCActive.intValue = 1
             outputTabBar.selectFirstTabViewItem(0)
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("ccCol")].hidden = true
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("msgAddressCol")].hidden = false
         } else if outputSelect == "MIDI" {
             MIDIActive.intValue = 1
             outputTabBar.selectLastTabViewItem(0)
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("msgAddressCol")].hidden = true
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("ccCol")].hidden = false
         } else {
             noneActive.intValue = 1
             outputTabBar.selectFirstTabViewItem(0)
@@ -274,8 +272,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         mappingTableView.setDelegate(self)
         mappingTableView.setDataSource(self)
         mappingTableView.target = self
-//        mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("msgAddress")].valueAtIndex(Int(0))
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveTable:", name: NSControlTextDidEndEditingNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveTable:", name: saveTableNotificationKey, object: nil)
     }
     
@@ -346,7 +342,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         // ... or if less messages are received, remove the unused ones
             mappings.removeRange(Range<Int>(start: incomingCount, end: mappings.count))
         }
-//        print(mappings)
         mappingTableView.reloadData()
     }
 
@@ -376,14 +371,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     // Handy function, as sometimes it is hard to get rid of some sticky values
     func flushNSUserDefaults()
     {
-        print(Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys).count)
         NSUserDefaults.standardUserDefaults().setBool(true, forKey: "justAnotherKey1")
         NSUserDefaults.standardUserDefaults().setBool(true, forKey: "justAnotherKey2")
-        print(Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys).count)
         for key in Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys) {
             NSUserDefaults.standardUserDefaults().removeObjectForKey(key)
         }
-        print(Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys).count)
     }
     
 }
@@ -393,7 +385,6 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
 class TableTextField:NSTextField, NSTextFieldDelegate {
 private let saveTableNotificationKey = "com.spacebarman.btcontroller.save"
 
-    
     override func awakeFromNib() {
     delegate = self
     }
@@ -405,9 +396,6 @@ private let saveTableNotificationKey = "com.spacebarman.btcontroller.save"
         let val = self.stringValue
         let cellData: NSDictionary = [ "row" : row, "col" : col!, "val" : val]
         NSNotificationCenter.defaultCenter().postNotificationName(saveTableNotificationKey, object: cellData)
-//        Swift.print(self.superview?.identifier)
-//        Swift.print(self.tag)
-//        Swift.print(self.stringValue)
     }
 }
 

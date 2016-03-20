@@ -135,7 +135,7 @@
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="OSC" identifier="1" id="wcq-ES-gpx">
-                            <view key="view" ambiguous="YES" id="ZbQ-BU-rD0">
+                            <view key="view" id="ZbQ-BU-rD0">
                                 <rect key="frame" x="10" y="7" width="0.0" height="0.0"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -182,7 +182,7 @@
                             </view>
                         </tabViewItem>
                         <tabViewItem label="MIDI" identifier="2" id="7Bf-39-fbY">
-                            <view key="view" id="MCp-S7-N0c">
+                            <view key="view" ambiguous="YES" id="MCp-S7-N0c">
                                 <rect key="frame" x="10" y="7" width="218" height="112"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
