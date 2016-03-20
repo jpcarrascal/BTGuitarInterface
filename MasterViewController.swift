@@ -11,7 +11,7 @@ import OSCKit
 import IOBluetooth
 
 ////class MasterViewController: NSViewController {
-class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDelegate {
+class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
 
     @IBOutlet weak var deviceName: NSTextField!
     @IBOutlet weak var outputTabBar: NSTabView!
@@ -45,7 +45,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         "OSCPort" : 6666,
         "MIDIDevice" : -1,
         "MIDIChannel" : 1,
-        "Mappings" : [["msgAddress": "/a", "Position": "1", "cc": "1", "status": "0"], ["msgAddress": "/b", "Position": "2", "cc": "2", "status": "0"], ["msgAddress": "/c", "Position": "3", "cc": "3", "status": "0"]]
+        "Mappings" : [["msgAddress": "/a", "position": "1", "cc": "1", "activity": "0"], ["msgAddress": "/b", "position": "2", "cc": "2", "activity": "0"], ["msgAddress": "/c", "position": "3", "cc": "3", "activity": "0"]]
         ])
     
     ////
@@ -53,6 +53,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     private var oscMessage:OSCMessage!
     private var nrfManager:NRFManager!
     private var midiManager:MIDIManager!
+    private let saveTableNotificationKey = "com.spacebarman.btcontroller.save"
 
     @IBAction func BTConnect(sender: AnyObject) {
         if self.BTStatus {
@@ -71,27 +72,31 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             MIDIDevice.enabled = false
             oscClient = OSCClient()
             oscMessage = OSCMessage()
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("ccCol")].hidden = true
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("msgAddressCol")].hidden = false
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
-                if let dataString = string {
-                    let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    if self.inputDataCount != dataArray.count {
+                if let incomingString = string {
+                    let incomingArray = incomingString.characters.split{$0 == ","}.map(String.init)
+                    if self.inputDataCount != incomingArray.count {
                         self.mappings.removeAll()
-                        self.inputDataCount = dataArray.count
+                        self.inputDataCount = incomingArray.count
                         self.updateMappings(self.inputDataCount)
                         self.prevOSCValues.removeAll()
-                        for _ in 0...(dataArray.count-1) {
+                        for _ in 0...(incomingArray.count-1) {
                             self.prevOSCValues.append(0)
                         }
                     }
-                    for index in 0...(dataArray.count-1) {
-                        if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
+                    for index in 0...(incomingArray.count-1) {
+                        if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             if(value != self.prevOSCValues[index]){
                                 self.activityLed(index, true)
+
                                 self.oscMessage.arguments = [value]
                                 self.oscMessage.address = self.mappings[index]["msgAddress"]!
                                 self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
                                 self.prevOSCValues[index] = value
+
                             } else {
                                 self.activityLed(index, false)
                             }
@@ -110,27 +115,31 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             MIDIDevice.enabled = true
             midiManager = MIDIManager(dev: NSUserDefaults.standardUserDefaults().integerForKey("MIDIDevice"))
             refreshMIDIDevices(0)
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("msgAddressCol")].hidden = true
+            mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("ccCol")].hidden = false
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
-                if let dataString = string {
-                    let dataArray = dataString.characters.split{$0 == ","}.map(String.init)
-                    if self.inputDataCount != dataArray.count {
-                        self.inputDataCount = dataArray.count
+                if let incomingString = string {
+                    let incomingArray = incomingString.characters.split{$0 == ","}.map(String.init)
+                    if self.inputDataCount != incomingArray.count {
+                        self.inputDataCount = incomingArray.count
                         self.updateMappings(self.inputDataCount)
                         self.prevMIDIValues.removeAll()
-                        for _ in 0...(dataArray.count-1) {
+                        for _ in 0...(incomingArray.count-1) {
                             self.prevMIDIValues.append(0)
                         }
                     }
-                    for index in 0...(dataArray.count-1) {
-                        if let value = Int(dataArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
+                    for index in 0...(incomingArray.count-1) {
+                        if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
                             let val:UInt8 = self.midiManager.mapRangeToMIDI(value,0,1023)
                             if(val != self.prevMIDIValues[index]){
                                 self.activityLed(index, true)
+
                                 let channel = UInt8(self.MIDIChannel.integerValue)
                                 let cc = UInt8(self.mappings[index]["cc"]!)
                                 self.midiManager.send(channel,cc!,val)
                                 self.prevMIDIValues[index] = val
+
                             } else {
                                 self.activityLed(index, false)
                             }
@@ -162,7 +171,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         MIDIDevice.addItemsWithObjectValues(["BT Guitar Port"])
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
         MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice+1)
-        print(MIDIDevice.objectValues)
+        print("Detected MIDI devices: \(MIDIDevice.objectValues)")
     }
  
     @IBAction func selectMIDIDevice(sender: AnyObject) {
@@ -174,6 +183,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
     
     @IBAction func refreshParameters(sender: AnyObject) {
         let who = sender.tag()
+//        NSNotificationCenter.defaultCenter().postNotificationName(saveNotificationKey, object: self)
         switch who {
         case 0:
             nrfManager.deviceName = deviceName.stringValue
@@ -188,14 +198,27 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         case 3:
             NSUserDefaults.standardUserDefaults().setObject(MIDIDevice.integerValue, forKey: "MIDIDevice")
         case 4:
-            NSUserDefaults.standardUserDefaults().setObject(MIDIChannel.integerValue, forKey: "MIDIChannel")
+            NSUserDefaults.standardUserDefaults().setObject(MIDIChannel.indexOfSelectedItem, forKey: "MIDIChannel")
         default:
             NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
         }
+//        NSUserDefaults.standardUserDefaults().synchronize()
 // Fix this:
-        NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
         //print(NSUserDefaults.standardUserDefaults().arrayForKey("Mappings"))
-
+    }
+    
+    func saveTable(sender:AnyObject) {
+        let cellData = sender.object as! NSDictionary
+        let tmp = cellData["row"] as! String
+        let row = Int(tmp)!
+        let col:String = cellData["col"] as! String
+        let val:String = cellData["val"] as! String
+        mappings[row][col] = val
+        print(mappings)
+        print("\(row), \(col), \(val)")
+        mappingTableView.reloadData()
+        NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
+        print("Table saved!")
     }
     
     override func viewDidLoad() {
@@ -205,6 +228,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         prevOSCValues = [0,0,0,0,0,0,0,0]
         prevMIDIValues = [0,0,0,0,0,0,0,0]
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults as! [String : AnyObject])
+        MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
         loadUserData()
         if outputSelect == "OSC" {
             OSCActive.intValue = 1
@@ -244,12 +268,15 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         scanText.stringValue = "Searching for " + nrfManager.deviceName + "..."
         BTConnectText.title = "Connecting"
         BTConnectText.enabled = false
-        MIDIChannel.addItemsWithObjectValues([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
-        MIDIChannel.selectItemAtIndex(0)
         selectOutputProtocol(0)
+//        flushNSUserDefaults()
         updateMappings(3)
         mappingTableView.setDelegate(self)
         mappingTableView.setDataSource(self)
+        mappingTableView.target = self
+//        mappingTableView.tableColumns[mappingTableView.columnWithIdentifier("msgAddress")].valueAtIndex(Int(0))
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveTable:", name: NSControlTextDidEndEditingNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveTable:", name: saveTableNotificationKey, object: nil)
     }
     
     func loadUserData() {
@@ -258,49 +285,50 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         OSCAddress.stringValue = NSUserDefaults.standardUserDefaults().stringForKey("OSCAddress")!
         OSCPort.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("OSCPort")
         // MIDI port is not here as it is recovered after scan
-        MIDIChannel.integerValue = NSUserDefaults.standardUserDefaults().integerForKey("MIDIChannel")
+        MIDIChannel.selectItemAtIndex(NSUserDefaults.standardUserDefaults().integerForKey("MIDIChannel"))
     }
 
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        
         var image:NSImage?
         var text:String = ""
         var cellIdentifier: String = ""
-        // 1
         let item = mappings[row]
         if tableColumn == tableView.tableColumns[0] {
-            if item["status"] == "0" {
+            if item["activity"] == "0" {
                 image = NSImage(named: "NSStatusNone")
             } else {
                 image = NSImage(named: "NSStatusAvailable")
             }
-            cellIdentifier = "activityCellID"
+            cellIdentifier = "activity"
         } else if tableColumn == tableView.tableColumns[1] {
-            text = item["Position"]!
-            cellIdentifier = "positionCellID"
+            text = item["position"]!
+            cellIdentifier = "position"
         } else if tableColumn == tableView.tableColumns[2] {
-            if outputSelect == "OSC" {
-                text = item["msgAddress"]!
-            } else if outputSelect == "MIDI" {
-                text = item["cc"]!
-            }
-            cellIdentifier = "destinationCellID"
+            text = item["msgAddress"]!
+            cellIdentifier = "msgAddress"
+        } else if tableColumn == tableView.tableColumns[3] {
+            text = item["cc"]!
+            cellIdentifier = "cc"
         }
-        // 3
         if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
             cell.imageView?.image = image ?? nil
             cell.textField?.stringValue = text
+            cell.textField?.tag = row
             return cell
         }
         return nil
     }
     
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+        //return directoryItems?.count ?? 0
+        return mappings.count
+    }
 
-    func updateMappings(datacount: Int) {
+    func updateMappings(incomingCount: Int) {
         mappings = (NSUserDefaults.standardUserDefaults().objectForKey("Mappings") as? [[String: String]])!
         // If more messages are received, pad the mappings table with empty rows:
-        if datacount > mappings.count {
+        if incomingCount > mappings.count {
             var maxcc = 1
             for item in mappings {
                 let curcc = Int(item["cc"]!)
@@ -309,11 +337,14 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
                 }
             }
             let mapcount = mappings.count
-            for i in mapcount...(datacount-1) {
-                let data = ["Position": String(i+1), "msgAddress":"",
-                    "cc":String(maxcc+i-mapcount+1), "status": "0"]
+            for i in mapcount...(incomingCount-1) {
+                let data = ["position": String(i+1), "msgAddress":"/",
+                    "cc":String(maxcc+i-mapcount+1), "acivity": "0"]
                 mappings.append(data)
             }
+        } else {
+        // ... or if less messages are received, remove the unused ones
+            mappings.removeRange(Range<Int>(start: incomingCount, end: mappings.count))
         }
 //        print(mappings)
         mappingTableView.reloadData()
@@ -329,26 +360,54 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             mySelectedRows.append(index)
             index = indexes.indexGreaterThanIndex(index)
         }
-        print(mySelectedRows)
     }
     
     func activityLed(index:Int, _ status:Bool) {
         if status {
-            self.mappings[index]["status"] = "1"
+            self.mappings[index]["activity"] = "1"
         } else {
-            self.mappings[index]["status"] = "0"
+            self.mappings[index]["activity"] = "0"
         }
         self.mappingTableView.beginUpdates()
         self.mappingTableView.reloadDataForRowIndexes(NSIndexSet(index: index), columnIndexes: NSIndexSet(index: 0))
         self.mappingTableView.endUpdates()
     }
     
+    // Handy function, as sometimes it is hard to get rid of some sticky values
+    func flushNSUserDefaults()
+    {
+        print(Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys).count)
+        NSUserDefaults.standardUserDefaults().setBool(true, forKey: "justAnotherKey1")
+        NSUserDefaults.standardUserDefaults().setBool(true, forKey: "justAnotherKey2")
+        print(Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys).count)
+        for key in Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys) {
+            NSUserDefaults.standardUserDefaults().removeObjectForKey(key)
+        }
+        print(Array(NSUserDefaults.standardUserDefaults().dictionaryRepresentation().keys).count)
+    }
     
 }
 
-extension MasterViewController : NSTableViewDataSource {
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        //return directoryItems?.count ?? 0
-        return mappings.count
+
+
+class TableTextField:NSTextField, NSTextFieldDelegate {
+private let saveTableNotificationKey = "com.spacebarman.btcontroller.save"
+
+    
+    override func awakeFromNib() {
+    delegate = self
+    }
+
+    override func textDidEndEditing(obj: NSNotification)
+    {
+        let col = self.superview!.identifier
+        let row = String(self.tag)
+        let val = self.stringValue
+        let cellData: NSDictionary = [ "row" : row, "col" : col!, "val" : val]
+        NSNotificationCenter.defaultCenter().postNotificationName(saveTableNotificationKey, object: cellData)
+//        Swift.print(self.superview?.identifier)
+//        Swift.print(self.tag)
+//        Swift.print(self.stringValue)
     }
 }
+

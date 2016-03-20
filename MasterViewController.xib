@@ -89,6 +89,47 @@
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
                 </box>
+                <box fixedFrame="YES" title="Output" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="5LR-lx-TN8">
+                    <rect key="frame" x="17" y="360" width="236" height="55"/>
+                    <view key="contentView" id="Ul2-FY-LyA">
+                        <rect key="frame" x="1" y="1" width="234" height="39"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wYo-ks-s3A">
+                                <rect key="frame" x="19" y="10" width="50" height="18"/>
+                                <buttonCell key="cell" type="radio" title="OSC" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="XUt-eo-mRo">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="selectOutputProtocol:" target="-2" id="lmJ-VS-HR1"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hjA-nf-Phr">
+                                <rect key="frame" x="88" y="10" width="50" height="18"/>
+                                <buttonCell key="cell" type="radio" title="MIDI" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="QLh-p4-Afm">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="selectOutputProtocol:" target="-2" id="7sa-bg-hoy"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Wu-Pq-kjx">
+                                <rect key="frame" x="157" y="10" width="42" height="18"/>
+                                <buttonCell key="cell" type="radio" title="Off" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="akd-fD-Cua">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="selectOutputProtocol:" target="-2" id="g7L-jJ-Ri8"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
                 <tabView fixedFrame="YES" type="noTabsBezelBorder" translatesAutoresizingMaskIntoConstraints="NO" id="1Z0-p0-5zC">
                     <rect key="frame" x="16" y="217" width="238" height="132"/>
                     <font key="font" metaFont="system"/>
@@ -205,13 +246,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" autosaveName="" headerView="dFr-ec-Thg" viewBased="YES" id="OTW-aL-wjE">
-                                <rect key="frame" x="0.0" y="0.0" width="230" height="136"/>
+                                <rect key="frame" x="0.0" y="0.0" width="340" height="136"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="0.0"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
-                                    <tableColumn width="47" minWidth="47" maxWidth="150" id="HNZ-n9-BLr">
+                                    <tableColumn identifier="activityCol" width="47" minWidth="47" maxWidth="150" id="HNZ-n9-BLr">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Activity">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -224,7 +265,7 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <prototypeCellViews>
-                                            <tableCellView identifier="activityCellID" id="olu-Os-vRl">
+                                            <tableCellView identifier="activity" id="olu-Os-vRl">
                                                 <rect key="frame" x="1" y="0.0" width="47" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -239,7 +280,7 @@
                                             </tableCellView>
                                         </prototypeCellViews>
                                     </tableColumn>
-                                    <tableColumn width="67" minWidth="45" maxWidth="150" id="GLB-o9-XHl">
+                                    <tableColumn identifier="positionCol" width="67" minWidth="45" maxWidth="150" id="GLB-o9-XHl">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Input index">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -252,7 +293,7 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <prototypeCellViews>
-                                            <tableCellView identifier="positionCellID" id="Kaa-Se-wL5">
+                                            <tableCellView identifier="position" id="Kaa-Se-wL5">
                                                 <rect key="frame" x="51" y="0.0" width="67" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -271,7 +312,7 @@
                                             </tableCellView>
                                         </prototypeCellViews>
                                     </tableColumn>
-                                    <tableColumn identifier="" width="107" minWidth="45" maxWidth="150" id="ofp-nu-HJV">
+                                    <tableColumn identifier="msgAddressCol" width="107" minWidth="45" maxWidth="150" id="ofp-nu-HJV">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="OSCAddress">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -284,11 +325,11 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <prototypeCellViews>
-                                            <tableCellView identifier="destinationCellID" id="f51-5S-JEV">
+                                            <tableCellView identifier="msgAddress" id="f51-5S-JEV">
                                                 <rect key="frame" x="121" y="0.0" width="107" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="07f-eS-m0f" userLabel="oscaddresscell">
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="07f-eS-m0f" customClass="TableTextField" customModule="BT_Guitar_Interface" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="3" width="91" height="14"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" id="V0Y-Q4-0XJ">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -299,6 +340,38 @@
                                                 </subviews>
                                                 <connections>
                                                     <outlet property="textField" destination="07f-eS-m0f" id="aeR-yS-73I"/>
+                                                </connections>
+                                            </tableCellView>
+                                        </prototypeCellViews>
+                                    </tableColumn>
+                                    <tableColumn identifier="ccCol" width="107" minWidth="45" maxWidth="150" id="AXU-ZG-WUT">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="CC">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="Jkh-wl-v9o">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <prototypeCellViews>
+                                            <tableCellView identifier="cc" hidden="YES" id="cj3-2u-Goj">
+                                                <rect key="frame" x="231" y="0.0" width="107" height="17"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8QV-OK-SnU" customClass="TableTextField" customModule="BT_Guitar_Interface" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
+                                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="k8Q-pg-dJv">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                                <connections>
+                                                    <outlet property="textField" destination="8QV-OK-SnU" id="cuR-GA-t0V"/>
                                                 </connections>
                                             </tableCellView>
                                         </prototypeCellViews>
@@ -317,51 +390,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <tableHeaderView key="headerView" id="dFr-ec-Thg">
-                        <rect key="frame" x="0.0" y="0.0" width="230" height="23"/>
+                        <rect key="frame" x="0.0" y="0.0" width="340" height="23"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
-                <box fixedFrame="YES" title="Output" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="5LR-lx-TN8">
-                    <rect key="frame" x="17" y="360" width="236" height="55"/>
-                    <view key="contentView" id="Ul2-FY-LyA">
-                        <rect key="frame" x="1" y="1" width="234" height="39"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wYo-ks-s3A">
-                                <rect key="frame" x="19" y="10" width="50" height="18"/>
-                                <buttonCell key="cell" type="radio" title="OSC" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="XUt-eo-mRo">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="selectOutputProtocol:" target="-2" id="lmJ-VS-HR1"/>
-                                </connections>
-                            </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hjA-nf-Phr">
-                                <rect key="frame" x="88" y="10" width="50" height="18"/>
-                                <buttonCell key="cell" type="radio" title="MIDI" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="QLh-p4-Afm">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="selectOutputProtocol:" target="-2" id="7sa-bg-hoy"/>
-                                </connections>
-                            </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Wu-Pq-kjx">
-                                <rect key="frame" x="157" y="10" width="42" height="18"/>
-                                <buttonCell key="cell" type="radio" title="Off" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="akd-fD-Cua">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="selectOutputProtocol:" target="-2" id="g7L-jJ-Ri8"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                    </view>
-                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                </box>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uon-wX-bfs">
                     <rect key="frame" x="103" y="9" width="149" height="22"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="www.spacebarman.com" id="pcR-d9-syD">
