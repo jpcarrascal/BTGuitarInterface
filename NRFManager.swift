@@ -50,7 +50,7 @@ public class NRFManager:NSObject, CBCentralManagerDelegate, UARTPeripheralDelega
     public var autoConnect = true
     public var delegate:NRFManagerDelegate?
     // JP: Name of device to connect:
-    public var deviceName:String = "RFDuino"
+    public var deviceName:String = "Adafruit Bluefruit LE"
 
     //callbacks
     public var connectionCallback:(()->())?
@@ -88,7 +88,7 @@ public class NRFManager:NSObject, CBCentralManagerDelegate, UARTPeripheralDelega
         return Static.instance
     }
     // JP: Added a parameter for selecting the name of the device to connect to (deviceName:String)
-    public init(delegate:NRFManagerDelegate? = nil, onConnect connectionCallback:(()->())? = nil, onDisconnect disconnectionCallback:(()->())? = nil, onData dataCallback:((data:NSData?, string:String?)->())? = nil, deviceName:String = "RFDuino", autoConnect:Bool = true)
+    public init(delegate:NRFManagerDelegate? = nil, onConnect connectionCallback:(()->())? = nil, onDisconnect disconnectionCallback:(()->())? = nil, onData dataCallback:((data:NSData?, string:String?)->())? = nil, deviceName:String = "Adafruit Bluefruit LE", autoConnect:Bool = true)
     {
         super.init()
         self.delegate = delegate
@@ -107,14 +107,14 @@ extension NRFManager {
     
     private func scanForPeripheral()
     {
-        let connectedPeripherals = bluetoothManager.retrieveConnectedPeripheralsWithServices([UARTPeripheral.uartServiceUUID()])
+        let connectedPeripherals = bluetoothManager.retrieveConnectedPeripheralsWithServices(UARTPeripheral.uartServiceUUID())
 
         if connectedPeripherals.count > 0 {
             log("Already connected ...")
             connectPeripheral(connectedPeripherals[0] as CBPeripheral)
         } else {
             log("Scan for Peripherials")
-            bluetoothManager.scanForPeripheralsWithServices([UARTPeripheral.uartServiceUUID()], options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
+            bluetoothManager.scanForPeripheralsWithServices(UARTPeripheral.uartServiceUUID(), options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
         }
     }
     
@@ -276,8 +276,8 @@ extension NRFManager {
             delegate?.nrfReceivedData?(self, data:newData, string: string! as String)
             
         }
-        /* 
-            JP:
+        /*
+            // JP:
             FIX FOR RFDUINO:
             RFDuino does not have a Hardware Revision service,
             so we don't wait for that to switch to ".Connected"
@@ -354,11 +354,11 @@ extension UARTPeripheral {
             for service:CBService in services {
                 if let characteristics = service.characteristics {
                     for characteristic:CBCharacteristic in characteristics {
-                        if compareID(characteristic.UUID, toID: UARTPeripheral.rxCharacteristicsUUID()) {
+                        if UARTPeripheral.rxCharacteristicsUUID().contains(characteristic.UUID) {
                             log("Found RX Characteristics")
                             rxCharacteristic = characteristic
                             peripheral.setNotifyValue(true, forCharacteristic: rxCharacteristic!)
-                        } else if compareID(characteristic.UUID, toID: UARTPeripheral.txCharacteristicsUUID()) {
+                        } else if UARTPeripheral.txCharacteristicsUUID().contains(characteristic.UUID) {
                             log("Found TX Characteristics")
                             txCharacteristic = characteristic
                         } else if compareID(characteristic.UUID, toID: UARTPeripheral.hardwareRevisionStringUUID()) {
@@ -387,7 +387,7 @@ extension UARTPeripheral {
         }
         
         log("Start service discovery: \(peripheral.name)")
-        peripheral.discoverServices([UARTPeripheral.uartServiceUUID(), UARTPeripheral.deviceInformationServiceUUID()])
+        peripheral.discoverServices(UARTPeripheral.uartServiceUUID() + [UARTPeripheral.deviceInformationServiceUUID()])
     }
     
     private func writeString(string:String)
@@ -425,10 +425,10 @@ extension UARTPeripheral {
                     if service.characteristics != nil {
                         //var e = NSError()
                         //peripheral(peripheral, didDiscoverCharacteristicsForService: s, error: e)
-                    } else if compareID(service.UUID, toID: UARTPeripheral.uartServiceUUID()) {
+                    } else if UARTPeripheral.uartServiceUUID().contains(service.UUID) {
                         log("Found correct service")
                         uartService = service
-                        peripheral.discoverCharacteristics([UARTPeripheral.txCharacteristicsUUID(),UARTPeripheral.rxCharacteristicsUUID()], forService: uartService!)
+                    peripheral.discoverCharacteristics(UARTPeripheral.txCharacteristicsUUID() + UARTPeripheral.rxCharacteristicsUUID(), forService: uartService!)
                     } else if compareID(service.UUID, toID: UARTPeripheral.deviceInformationServiceUUID()) {
                         peripheral.discoverCharacteristics([UARTPeripheral.hardwareRevisionStringUUID()], forService: service)
                     }
@@ -482,25 +482,27 @@ extension UARTPeripheral {
 }
 
 // MARK: Class Methods
+// JP: Changed as arrays to support multiple devices.
+// Code above was also modified to handle [CBUUID] instead of CBUUID
 extension UARTPeripheral {
-    class func uartServiceUUID() -> CBUUID {
-        return CBUUID(string:"2220")
+    class func uartServiceUUID() -> [CBUUID] {
+        return [CBUUID(string:"6e400001-b5a3-f393-e0a9-e50e24dcca9e"), CBUUID(string:"2220")]
     }
     
-    class func txCharacteristicsUUID() -> CBUUID {
-        return CBUUID(string:"2222")
+    class func txCharacteristicsUUID() -> [CBUUID] {
+        return [CBUUID(string:"6e400002-b5a3-f393-e0a9-e50e24dcca9e"), CBUUID(string:"2222")]
     }
     
-    class func rxCharacteristicsUUID() -> CBUUID {
-        return CBUUID(string:"2221")
+    class func rxCharacteristicsUUID() -> [CBUUID] {
+        return [CBUUID(string:"6e400003-b5a3-f393-e0a9-e50e24dcca9e"), CBUUID(string:"2221")]
     }
     
     class func deviceInformationServiceUUID() -> CBUUID{
-        return CBUUID(string:"2220")
+        return CBUUID(string:"180A")
     }
     
     class func hardwareRevisionStringUUID() -> CBUUID{
-        return CBUUID(string:"2220")
+        return CBUUID(string:"2A27")
     }
 }
 

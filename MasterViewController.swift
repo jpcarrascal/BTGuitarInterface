@@ -10,7 +10,7 @@ import Cocoa
 import OSCKit
 import IOBluetooth
 
-class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDelegate, NSTableViewDataSource {
+class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
 
     @IBOutlet weak var deviceName: NSTextField!
     @IBOutlet weak var outputTabBar: NSTabView!
@@ -157,8 +157,9 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             MIDIRefreshButton.enabled = false
             MIDIDevice.enabled = false
             nrfManager.dataCallback = nil
-            print("Enjoy the silence...")
             outputSelect = "None"
+            clearLeds()
+            print("Enjoy the silence...")
             NSUserDefaults.standardUserDefaults().setObject(outputSelect, forKey: "outputSelect")
         }
         mappingTableView.reloadData()
@@ -186,6 +187,7 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         case 0:
             nrfManager.deviceName = deviceName.stringValue
             self.nrfManager.disconnect()
+            clearLeds()
             scanText.stringValue = "Searching for " + nrfManager.deviceName + "..."
             self.nrfManager.connect()
             NSUserDefaults.standardUserDefaults().setObject(deviceName.stringValue, forKey: "deviceName")
@@ -253,10 +255,11 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
             onDisconnect: {
                 self.BTStatus = false
                 print("Disconnected")
+                self.clearLeds()
                 self.BTConnectText.title = "Connect"
                 self.nrfManager.autoConnect = false
-                self.BTIndicator.image = NSImage(named: "NSStatusPartiallyAvailable")
-                self.scanText.stringValue = "RFDuino found (not connected)"
+                self.BTIndicator.image = NSImage(named: "NSStatusNone")
+                self.scanText.stringValue = "Not connected"
             },
             onData: nil,
             deviceName: deviceName.stringValue,
@@ -366,6 +369,13 @@ class MasterViewController: NSViewController, NRFManagerDelegate, NSTableViewDel
         self.mappingTableView.beginUpdates()
         self.mappingTableView.reloadDataForRowIndexes(NSIndexSet(index: index), columnIndexes: NSIndexSet(index: 0))
         self.mappingTableView.endUpdates()
+    }
+    
+    func clearLeds()
+    {
+        for i in 0...mappings.count-1 {
+            activityLed(i, false)
+        }
     }
     
     // Handy function, as sometimes it is hard to get rid of some sticky values
