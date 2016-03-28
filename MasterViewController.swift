@@ -38,7 +38,7 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     private var deviceListNames = [String]()
     private var BTStatus = false;
     private var defaults = NSDictionary(dictionary: [
-        "deviceName" : "RFDuino",
+        "deviceName" : "Bluefruit LE",
         "outputSelect" : "None",
         "OSCAddress" : "127.0.0.1",
         "OSCPort" : 6666,
@@ -47,7 +47,6 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         "Mappings" : [["msgAddress": "/a", "position": "1", "cc": "1", "activity": "0"], ["msgAddress": "/b", "position": "2", "cc": "2", "activity": "0"], ["msgAddress": "/c", "position": "3", "cc": "3", "activity": "0"]]
         ])
     
-    ////
     private var oscClient:OSCClient!
     private var oscMessage:OSCMessage!
     private var nrfManager:NRFManager!
@@ -202,7 +201,6 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         default:
             NSUserDefaults.standardUserDefaults().setObject(mappings, forKey: "Mappings")
         }
-//        NSUserDefaults.standardUserDefaults().synchronize()
     }
     
     func saveTable(sender:AnyObject) {
@@ -320,8 +318,7 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     }
     
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        //return directoryItems?.count ?? 0
-        return mappings.count
+        return mappings.count ?? 0
     }
 
     func updateMappings(incomingCount: Int) {
@@ -346,18 +343,6 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             mappings.removeRange(Range<Int>(start: incomingCount, end: mappings.count))
         }
         mappingTableView.reloadData()
-    }
-
-    func tableViewSelectionDidChange(notification: NSNotification) {
-        var mySelectedRows = [Int]()
-        let myTableViewFromNotification = notification.object as! NSTableView
-        // In this example, the TableView allows multiple selection
-        let indexes = myTableViewFromNotification.selectedRowIndexes
-        var index = indexes.firstIndex
-        while index != NSNotFound {
-            mySelectedRows.append(index)
-            index = indexes.indexGreaterThanIndex(index)
-        }
     }
     
     func activityLed(index:Int, _ status:Bool) {
