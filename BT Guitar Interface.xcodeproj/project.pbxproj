@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E808828E1CA8B7D000D7EC95 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E808828D1CA8B7D000D7EC95 /* Credits.rtf */; };
 		E8637E751C90E67900BB38D5 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8637E741C90E67900BB38D5 /* MIDIManager.swift */; };
 		E89A09221C8F94E1009AD1A9 /* NRFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89A09211C8F94E1009AD1A9 /* NRFManager.swift */; };
 		E89A09241C8FE099009AD1A9 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = E89A09231C8FE099009AD1A9 /* README.md */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BT_Guitar_Interface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.debug.xcconfig"; sourceTree = "<group>"; };
+		E808828D1CA8B7D000D7EC95 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		E8637E741C90E67900BB38D5 /* MIDIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
 		E89A09211C8F94E1009AD1A9 /* NRFManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NRFManager.swift; sourceTree = "<group>"; };
 		E89A09231C8FE099009AD1A9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -63,6 +65,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		E808828C1CA8B7A700D7EC95 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E808828D1CA8B7D000D7EC95 /* Credits.rtf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		E8E1C08F1C8BC37C00075EED = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +81,7 @@
 				E89A09211C8F94E1009AD1A9 /* NRFManager.swift */,
 				E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */,
 				E89A09231C8FE099009AD1A9 /* README.md */,
+				E808828C1CA8B7A700D7EC95 /* Resources */,
 				E8E1C09A1C8BC37C00075EED /* BT Guitar Interface */,
 				E8E1C0991C8BC37C00075EED /* Products */,
 				7DA4552F2B97B91A13809F32 /* Pods */,
@@ -160,6 +171,7 @@
 			files = (
 				E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */,
 				E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */,
+				E808828E1CA8B7D000D7EC95 /* Credits.rtf in Resources */,
 				E8E1C0AB1C8BCCD300075EED /* MasterViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
