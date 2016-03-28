@@ -167,7 +167,7 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
         midiManager.getMIDIDevices()
         MIDIDevice.removeAllItems()
-        MIDIDevice.addItemsWithObjectValues(["BT Guitar Port"])
+        MIDIDevice.addItemsWithObjectValues(["Virtual BT port"])
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
         MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice+1)
         print("Detected MIDI devices: \(MIDIDevice.objectValues)")

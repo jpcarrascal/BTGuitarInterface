@@ -49,7 +49,7 @@ public class MIDIManager:NSObject {
 //            MIDIClientDispose(midiClient)
             status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
             status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
-            MIDISourceCreate(virtualMidiClient, "BT Guitar Port", &virtualOutputPort);
+            MIDISourceCreate(virtualMidiClient, "Virtual BT port", &virtualOutputPort);
         }
         selectedMIDIDevice = index
         if status != 0 {

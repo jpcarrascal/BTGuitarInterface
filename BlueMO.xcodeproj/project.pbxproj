@@ -11,6 +11,7 @@
 		E8637E751C90E67900BB38D5 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8637E741C90E67900BB38D5 /* MIDIManager.swift */; };
 		E89A09221C8F94E1009AD1A9 /* NRFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89A09211C8F94E1009AD1A9 /* NRFManager.swift */; };
 		E89A09241C8FE099009AD1A9 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = E89A09231C8FE099009AD1A9 /* README.md */; };
+		E8BC907C1CA8DF0F00FCB726 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = E8BC907B1CA8DF0F00FCB726 /* Podfile */; };
 		E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C09B1C8BC37C00075EED /* AppDelegate.swift */; };
 		E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09D1C8BC37C00075EED /* Assets.xcassets */; };
 		E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09F1C8BC37C00075EED /* MainMenu.xib */; };
@@ -26,6 +27,7 @@
 		E8637E741C90E67900BB38D5 /* MIDIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
 		E89A09211C8F94E1009AD1A9 /* NRFManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NRFManager.swift; sourceTree = "<group>"; };
 		E89A09231C8FE099009AD1A9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E8BC907B1CA8DF0F00FCB726 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		E8E1C0981C8BC37C00075EED /* BlueMO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueMO.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E1C09B1C8BC37C00075EED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E8E1C09D1C8BC37C00075EED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				E89A09211C8F94E1009AD1A9 /* NRFManager.swift */,
 				E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */,
 				E89A09231C8FE099009AD1A9 /* README.md */,
+				E8BC907B1CA8DF0F00FCB726 /* Podfile */,
 				E808828C1CA8B7A700D7EC95 /* Resources */,
 				E8E1C09A1C8BC37C00075EED /* BlueMO */,
 				E8E1C0991C8BC37C00075EED /* Products */,
@@ -105,8 +108,7 @@
 				E8E1C09F1C8BC37C00075EED /* MainMenu.xib */,
 				E8E1C0A21C8BC37C00075EED /* Info.plist */,
 			);
-			name = BlueMO;
-			path = "BlueMO";
+			path = BlueMO;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,7 +130,7 @@
 			dependencies = (
 			);
 			name = BlueMO;
-			productName = "BlueMO";
+			productName = BlueMO;
 			productReference = E8E1C0981C8BC37C00075EED /* BlueMO.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -170,6 +172,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8BC907C1CA8DF0F00FCB726 /* Podfile in Resources */,
 				E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */,
 				E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */,
 				E808828E1CA8B7D000D7EC95 /* Credits.rtf in Resources */,
@@ -341,9 +344,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Spacebarman blue";
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "BlueMO/Info.plist";
+				INFOPLIST_FILE = BlueMO/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BlueMO";
+				PRODUCT_BUNDLE_IDENTIFIER = Spacebarman.BlueMO;
 				PRODUCT_NAME = BlueMO;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -358,9 +361,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Spacebarman blue";
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "BlueMO/Info.plist";
+				INFOPLIST_FILE = BlueMO/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BlueMO";
+				PRODUCT_BUNDLE_IDENTIFIER = Spacebarman.BlueMO;
 				PRODUCT_NAME = BlueMO;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
