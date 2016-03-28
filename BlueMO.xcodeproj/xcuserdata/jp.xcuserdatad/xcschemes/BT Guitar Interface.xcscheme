@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E8E1C0971C8BC37C00075EED"
-               BuildableName = "BT Guitar Interface.app"
-               BlueprintName = "BT Guitar Interface"
+               BuildableName = "BlueMO.app"
+               BlueprintName = "BlueMO"
                ReferencedContainer = "container:RFDuino Receiver.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E8E1C0971C8BC37C00075EED"
-            BuildableName = "BT Guitar Interface.app"
-            BlueprintName = "BT Guitar Interface"
+            BuildableName = "BlueMO.app"
+            BlueprintName = "BlueMO"
             ReferencedContainer = "container:RFDuino Receiver.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
