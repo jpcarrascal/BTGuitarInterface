@@ -16,12 +16,12 @@
 		E8E1C0A11C8BC37C00075EED /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09F1C8BC37C00075EED /* MainMenu.xib */; };
 		E8E1C0AA1C8BCCD300075EED /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */; };
 		E8E1C0AB1C8BCCD300075EED /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */; };
-		FBD6EF4B8267A048F6BAFEFC /* Pods_BT_Guitar_Interface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */; };
+		FBD6EF4B8267A048F6BAFEFC /* Pods_BlueMO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 161E0B1ECC4E318D9C8D2A4B /* Pods_BlueMO.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BT_Guitar_Interface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.debug.xcconfig"; sourceTree = "<group>"; };
+		161E0B1ECC4E318D9C8D2A4B /* Pods_BlueMO.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueMO.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BBBA4DC45635DE96640FACB /* Pods-BlueMO.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueMO.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueMO/Pods-BlueMO.debug.xcconfig"; sourceTree = "<group>"; };
 		E808828D1CA8B7D000D7EC95 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		E8637E741C90E67900BB38D5 /* MIDIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
 		E89A09211C8F94E1009AD1A9 /* NRFManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NRFManager.swift; sourceTree = "<group>"; };
@@ -33,7 +33,7 @@
 		E8E1C0A21C8BC37C00075EED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E8E1C0A81C8BCCD300075EED /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		E8E1C0A91C8BCCD300075EED /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MasterViewController.xib; sourceTree = "<group>"; };
-		F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BT Guitar Interface.release.xcconfig"; path = "Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface.release.xcconfig"; sourceTree = "<group>"; };
+		F589E18559AA362DE9417087 /* Pods-BlueMO.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueMO.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueMO/Pods-BlueMO.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,7 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBD6EF4B8267A048F6BAFEFC /* Pods_BT_Guitar_Interface.framework in Frameworks */,
+				FBD6EF4B8267A048F6BAFEFC /* Pods_BlueMO.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,8 +51,8 @@
 		7DA4552F2B97B91A13809F32 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */,
-				F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */,
+				1BBBA4DC45635DE96640FACB /* Pods-BlueMO.debug.xcconfig */,
+				F589E18559AA362DE9417087 /* Pods-BlueMO.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -60,7 +60,7 @@
 		E01F58EA13DB413F15584295 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				161E0B1ECC4E318D9C8D2A4B /* Pods_BT_Guitar_Interface.framework */,
+				161E0B1ECC4E318D9C8D2A4B /* Pods_BlueMO.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -106,7 +106,7 @@
 				E8E1C0A21C8BC37C00075EED /* Info.plist */,
 			);
 			name = BlueMO;
-			path = "BT Guitar Interface";
+			path = "BlueMO";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,7 +128,7 @@
 			dependencies = (
 			);
 			name = BlueMO;
-			productName = "BT Guitar Interface";
+			productName = "BlueMO";
 			productReference = E8E1C0981C8BC37C00075EED /* BlueMO.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -192,7 +192,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueMO/Pods-BlueMO-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DB9CB7D2E35B69ABB6A5D86D /* Check Pods Manifest.lock */ = {
@@ -222,7 +222,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BT Guitar Interface/Pods-BT Guitar Interface-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueMO/Pods-BlueMO-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -336,14 +336,14 @@
 		};
 		E8E1C0A61C8BC37C00075EED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BBBA4DC45635DE96640FACB /* Pods-BT Guitar Interface.debug.xcconfig */;
+			baseConfigurationReference = 1BBBA4DC45635DE96640FACB /* Pods-BlueMO.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Spacebarman blue";
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "BT Guitar Interface/Info.plist";
+				INFOPLIST_FILE = "BlueMO/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BT-Guitar-Interface";
+				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BlueMO";
 				PRODUCT_NAME = BlueMO;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -353,14 +353,14 @@
 		};
 		E8E1C0A71C8BC37C00075EED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F589E18559AA362DE9417087 /* Pods-BT Guitar Interface.release.xcconfig */;
+			baseConfigurationReference = F589E18559AA362DE9417087 /* Pods-BlueMO.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Spacebarman blue";
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "BT Guitar Interface/Info.plist";
+				INFOPLIST_FILE = "BlueMO/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BT-Guitar-Interface";
+				PRODUCT_BUNDLE_IDENTIFIER = "Spacebarman.BlueMO";
 				PRODUCT_NAME = BlueMO;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
