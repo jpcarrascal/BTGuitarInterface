@@ -1,5 +1,5 @@
 # BlueMO
-BlueMO allows you to receive data from Adafruit's Bluefruit boards or RFDuino and translate it into OSC or MIDI.
+BlueMO allows you to receive data from Adafruit's Bluefruit boards or RFDuino and translate it into MIDI or OSC.
 
 This project obeys very specific personal needs, but might be useful for similar applications. I augmented an electric guitar with some sensors. I needed to transmit the output of these sensors wirelessly to my Mac without the need of additional hardware (besides what is installed in the guitar). I opted for using an Adafruit's Feather 32u4 Bluefruit LE (https://www.adafruit.com/products/2829) to collect sensor data and send it through Bluetooth LE. It should also work with an RFDuino microcontroller (http://www.rfduino.com/). BlueMO is written mostly in swift (my first try at OSX development). It uses some external libraries:
 
