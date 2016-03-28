@@ -358,8 +358,10 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     
     func clearLeds()
     {
-        for i in 0...mappings.count-1 {
-            activityLed(i, false)
+        if mappings.count > 0 {
+            for i in 0...mappings.count-1 {
+                activityLed(i, false)
+            }
         }
     }
     
