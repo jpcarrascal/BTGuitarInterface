@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  BT Guitar Interface
+//  BlueMO
 //
 //  Created by JP Carrascal on 05/03/16.
 //  Copyright © 2016 Spacebarman. All rights reserved.

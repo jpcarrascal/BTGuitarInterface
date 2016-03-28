@@ -6,7 +6,7 @@
         <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="MasterViewController" customModule="BT_Guitar_Interface" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="MasterViewController" customModule="BlueMO" customModuleProvider="target">
             <connections>
                 <outlet property="BTConnectText" destination="7sg-GN-rTr" id="k0c-3c-RFH"/>
                 <outlet property="BTIndicator" destination="cCF-vh-AJh" id="MU8-CM-092"/>
@@ -329,7 +329,7 @@
                                                 <rect key="frame" x="121" y="0.0" width="107" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="07f-eS-m0f" customClass="TableTextField" customModule="BT_Guitar_Interface" customModuleProvider="target">
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="07f-eS-m0f" customClass="TableTextField" customModule="BlueMO" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="3" width="91" height="14"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" id="V0Y-Q4-0XJ">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -361,7 +361,7 @@
                                                 <rect key="frame" x="231" y="0.0" width="107" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8QV-OK-SnU" customClass="TableTextField" customModule="BT_Guitar_Interface" customModuleProvider="target">
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8QV-OK-SnU" customClass="TableTextField" customModule="BlueMO" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="k8Q-pg-dJv">
                                                             <font key="font" metaFont="smallSystem"/>
