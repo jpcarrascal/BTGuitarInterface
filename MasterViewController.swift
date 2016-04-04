@@ -30,7 +30,8 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     @IBOutlet weak var MIDIDevice: NSComboBox!
     @IBOutlet weak var MIDIChannel: NSComboBox!
     
-    private var outputSelect: String = ""
+    private var outputSelect: String = "None"
+    private var valuesBuffer: String = ""
     private var inputDataCount: Int = 0
     private var mappings = [[String : String]]()
     private var prevOSCValues = [Int]()
@@ -75,28 +76,20 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 if let incomingString = string {
-                    let incomingArray = incomingString.characters.split{$0 == ","}.map(String.init)
-                    if self.inputDataCount != incomingArray.count {
-                        self.mappings.removeAll()
-                        self.inputDataCount = incomingArray.count
-                        self.updateMappings(self.inputDataCount)
-                        self.prevOSCValues.removeAll()
-                        for _ in 0...(incomingArray.count-1) {
-                            self.prevOSCValues.append(0)
-                        }
-                    }
-                    for index in 0...(incomingArray.count-1) {
-                        if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
-                            if(value != self.prevOSCValues[index]){
-                                self.activityLed(index, true)
-
-                                self.oscMessage.arguments = [value]
-                                self.oscMessage.address = self.mappings[index]["msgAddress"]!
-                                self.oscClient.sendMessage(self.oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
-                                self.prevOSCValues[index] = value
-
+                    if incomingString.rangeOfString("|") == nil {
+                    // Append to buffer:
+                        self.valuesBuffer += incomingString
+                    } else if incomingString.rangeOfString("|") != nil {
+                        for c in incomingString.characters {
+                            // If not end of received package, append to buffer
+                            if c != "|" {
+                                self.valuesBuffer.append(c)
                             } else {
-                                self.activityLed(index, false)
+                            // If end of received package and buffer is not empty, send data:
+                                if self.valuesBuffer.characters.count > 0 {
+                                    self.sendData()
+                                    self.valuesBuffer = ""
+                                }
                             }
                         }
                     }
@@ -118,28 +111,20 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 if let incomingString = string {
-                    let incomingArray = incomingString.characters.split{$0 == ","}.map(String.init)
-                    if self.inputDataCount != incomingArray.count {
-                        self.inputDataCount = incomingArray.count
-                        self.updateMappings(self.inputDataCount)
-                        self.prevMIDIValues.removeAll()
-                        for _ in 0...(incomingArray.count-1) {
-                            self.prevMIDIValues.append(0)
-                        }
-                    }
-                    for index in 0...(incomingArray.count-1) {
-                        if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
-                            let val:UInt8 = self.midiManager.mapRangeToMIDI(value,0,1023)
-                            if(val != self.prevMIDIValues[index]){
-                                self.activityLed(index, true)
-
-                                let channel = UInt8(self.MIDIChannel.integerValue)
-                                let cc = UInt8(self.mappings[index]["cc"]!)
-                                self.midiManager.send(channel,cc!,val)
-                                self.prevMIDIValues[index] = val
-
+                    if incomingString.rangeOfString("|") == nil {
+                        // Append to buffer:
+                        self.valuesBuffer += incomingString
+                    } else if incomingString.rangeOfString("|") != nil {
+                        for c in incomingString.characters {
+                            // If not end of received package, append to buffer
+                            if c != "|" {
+                                self.valuesBuffer.append(c)
                             } else {
-                                self.activityLed(index, false)
+                                // If end of received package and buffer is not empty, send data:
+                                if self.valuesBuffer.characters.count > 0 {
+                                    self.sendData()
+                                    self.valuesBuffer = ""
+                                }
                             }
                         }
                     }
@@ -162,6 +147,50 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             NSUserDefaults.standardUserDefaults().setObject(outputSelect, forKey: "outputSelect")
         }
         mappingTableView.reloadData()
+    }
+    
+    func sendData() {
+        print(valuesBuffer)
+        let incomingArray = valuesBuffer.characters.split{$0 == ","}.map(String.init)
+        if inputDataCount != incomingArray.count {
+            mappings.removeAll()
+            inputDataCount = incomingArray.count
+            updateMappings(inputDataCount)
+            prevOSCValues.removeAll()
+            prevMIDIValues.removeAll()
+            for _ in 0...(incomingArray.count-1) {
+                prevOSCValues.append(0)
+                prevMIDIValues.append(0)
+            }
+        }
+        if incomingArray.count > 0 {
+            for index in 0...(incomingArray.count-1) {
+                if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
+                    if outputSelect == "OSC" {
+                        if(value != prevOSCValues[index]){
+                            activityLed(index, true)
+                            oscMessage.arguments = [value]
+                            oscMessage.address = mappings[index]["msgAddress"]!
+                            oscClient.sendMessage(oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
+                            prevOSCValues[index] = value
+                        } else {
+                            activityLed(index, false)
+                        }
+                    } else if outputSelect == "MIDI" {
+                        let val:UInt8 = midiManager.mapRangeToMIDI(value,0,1023)
+                        if(val != prevMIDIValues[index]){
+                            activityLed(index, true)
+                            let channel = UInt8(MIDIChannel.integerValue)
+                            let cc = UInt8(mappings[index]["cc"]!)
+                            midiManager.send(channel,cc!,val)
+                            prevMIDIValues[index] = val
+                        } else {
+                            activityLed(index, false)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
