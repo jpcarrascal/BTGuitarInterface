@@ -10,7 +10,9 @@ I am also using Cocoapods to install and manage these libraries:
 - OSCKit (https://github.com/256dpi/OSCKit): For sending OSC (http://opensoundcontrol.org/introduction-osc) to other apps
 - CocoaAsyncSocket (https://github.com/robbiehanson/CocoaAsyncSocket): Required by OSCKit, autmatically imported by Cocoapods
 
-How to set it up:
+How to set it up
+
+BlueMO expects packets of values separated by commas and delimited by the "|" character, so set your microcontroller accordingly. On the Mac side:
 
 - Install Cocoapods (Instructions here:https://guides.cocoapods.org/using/getting-started.html)
 - Clone the repository or download the source and unzip
