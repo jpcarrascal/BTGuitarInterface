@@ -28,16 +28,16 @@ How to use:
 
 AAA,BBB,CCC,DDD,EEE
 
-Where each character group is a different sensor value (or whatever value you want to send) encoded as 3 HEX digits. This enough to represent the full 10-bit sensor value resolution used by most Arduino-based microcontrollers.
-A Bluetooth package can be no longer than 20 chars, so currently it might only be possible to send 5 distinct values. I used HEX as it would require character less than representing 10 bits in decimal (it would require 4 chars for values over 1000). I am planning in improving this implementation in the future, maybe by serializing the data stream in a MIDI-like fashion.
+    Where each character group is a different sensor value (or whatever value you want to send) encoded as 3 HEX digits. This enough to represent the full 10-bit sensor value resolution used by most Arduino-based microcontrollers.
+    A Bluetooth package can be no longer than 20 chars, so currently it might only be possible to send 5 distinct values. I used HEX as it would require character less than representing 10 bits in decimal (it would require 4 chars for values over 1000). I am planning in improving this implementation in the future, maybe by serializing the data stream in a MIDI-like fashion.
 
 3. BlueMO can translate these values into OSC or MIDI.
-* For MIDI:
+For MIDI:
 - BlueMO will create a virtual MIDI port. Select that port in your software and you'll receive datatrhough it. However you can connect BueMO directly to any MIDI port, for instance, to send control data directly to an external instrument. If BlueMO fails to recognize your MIDI port, please let me know about it.
 - Pick any of the 16 MIDI channels
 - Pick a continuous controller (MIDI CC) number for each of your sensor values 
 
-* For OSC:
+For OSC:
 - By default, BlueMO will send OSC data to the IP 127.0.0.1, port 6666. You can change these, of course.
 - You can also edit the routing addresses for each incoming sensor value. Again, every change you make will be saved for you to use at a later time.
 
