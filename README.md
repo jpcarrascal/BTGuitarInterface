@@ -22,16 +22,16 @@ BlueMO expects packets of values separated by commas and delimited by the "|" ch
 
 How to use:
 
-1. Select the name of your Bluefruit/RFDuino, so BlueMO connect to it and not to any device around. BlueMO is meant to be ready to work as soon as it is launched, so it will try to connect as soon as you open the software. Additionally, it will remember all your settings from the previous launch without having to press any save button'. No need to reconfigure anything, just launch and play!
+- Select the name of your Bluefruit/RFDuino, so BlueMO connect to it and not to any device around. BlueMO is meant to be ready to work as soon as it is launched, so it will try to connect as soon as you open the software. Additionally, it will remember all your settings from the previous launch without having to press any save button'. No need to reconfigure anything, just launch and play!
 
-2. Configure your Bluetooth module to send data over Bluetooth using string packages with this format:
+- Configure your Bluetooth module to send data over Bluetooth using string packages with this format:
 
     AAA,BBB,CCC,DDD,EEE
 
 Where each character group is a different sensor value (or whatever value you want to send) encoded as 3 HEX digits. This enough to represent the full 10-bit sensor value resolution used by most Arduino-based microcontrollers.
 A Bluetooth package can be no longer than 20 chars, so currently it might only be possible to send 5 distinct values. I used HEX as it would require character less than representing 10 bits in decimal (it would require 4 chars for values over 1000). I am planning in improving this implementation in the future, maybe by serializing the data stream in a MIDI-like fashion.
 
-3. BlueMO can translate these values into OSC or MIDI.
+- BlueMO can translate these values into OSC or MIDI.
 
 * For MIDI:
 BlueMO will create a virtual MIDI port. Select that port in your software and you'll receive data through it. However you can connect BueMO directly to any MIDI port, for instance, to send control data directly to an external instrument. (If BlueMO fails to recognize your MIDI port, please let me know about it.) Pick a MIDI channel an a continuous controller (MIDI CC) number for each of your sensor values 
