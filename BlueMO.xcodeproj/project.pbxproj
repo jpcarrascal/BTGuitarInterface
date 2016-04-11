@@ -10,7 +10,6 @@
 		E808828E1CA8B7D000D7EC95 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E808828D1CA8B7D000D7EC95 /* Credits.rtf */; };
 		E8637E751C90E67900BB38D5 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8637E741C90E67900BB38D5 /* MIDIManager.swift */; };
 		E89A09221C8F94E1009AD1A9 /* NRFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89A09211C8F94E1009AD1A9 /* NRFManager.swift */; };
-		E89A09241C8FE099009AD1A9 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = E89A09231C8FE099009AD1A9 /* README.md */; };
 		E8BC907C1CA8DF0F00FCB726 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = E8BC907B1CA8DF0F00FCB726 /* Podfile */; };
 		E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E1C09B1C8BC37C00075EED /* AppDelegate.swift */; };
 		E8E1C09E1C8BC37C00075EED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8E1C09D1C8BC37C00075EED /* Assets.xcassets */; };
@@ -237,7 +236,6 @@
 			files = (
 				E8E1C0AA1C8BCCD300075EED /* MasterViewController.swift in Sources */,
 				E89A09221C8F94E1009AD1A9 /* NRFManager.swift in Sources */,
-				E89A09241C8FE099009AD1A9 /* README.md in Sources */,
 				E8E1C09C1C8BC37C00075EED /* AppDelegate.swift in Sources */,
 				E8637E751C90E67900BB38D5 /* MIDIManager.swift in Sources */,
 			);

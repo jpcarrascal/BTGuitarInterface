@@ -258,7 +258,7 @@
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                         </tableHeaderCell>
-                                        <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="m8m-Lg-E5D">
+                                        <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" title="Text Cell" id="m8m-Lg-E5D">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -269,13 +269,22 @@
                                                 <rect key="frame" x="1" y="0.0" width="47" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ONg-ZD-jP7">
+                                                        <rect key="frame" x="18" y="1" width="33" height="14"/>
+                                                        <textFieldCell key="cell" controlSize="mini" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="0" id="4kj-F2-eat">
+                                                            <font key="font" metaFont="miniSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ORy-qQ-fkp">
-                                                        <rect key="frame" x="16" y="0.0" width="17" height="17"/>
-                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSStatusNone" id="tJe-MB-wFj"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="17" height="17"/>
+                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSStatusNone" id="tJe-MB-wFj"/>
                                                     </imageView>
                                                 </subviews>
                                                 <connections>
-                                                    <outlet property="imageView" destination="ORy-qQ-fkp" id="Req-aE-cr8"/>
+                                                    <outlet property="imageView" destination="ORy-qQ-fkp" id="kPA-n4-iAn"/>
+                                                    <outlet property="textField" destination="ONg-ZD-jP7" id="3lx-84-Qd0"/>
                                                 </connections>
                                             </tableCellView>
                                         </prototypeCellViews>

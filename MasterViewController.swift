@@ -31,7 +31,15 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     @IBOutlet weak var MIDIChannel: NSComboBox!
     
     private var outputSelect: String = "None"
-    private var valuesBuffer: String = ""
+    private var dataBuffer = [String]()/* {
+        didSet {
+            print(dataBuffer.count)
+            while dataBuffer.count > 0 {
+                sendData(dataBuffer[0])
+                dataBuffer.removeAtIndex(0)
+            }
+        }
+    }*/
     private var inputDataCount: Int = 0
     private var mappings = [[String : String]]()
     private var prevOSCValues = [Int]()
@@ -43,9 +51,9 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         "outputSelect" : "None",
         "OSCAddress" : "127.0.0.1",
         "OSCPort" : 6666,
-        "MIDIDevice" : -1,
+        "MIDIDevice" : 0,
         "MIDIChannel" : 1,
-        "Mappings" : [["msgAddress": "/a", "position": "1", "cc": "1", "activity": "0"], ["msgAddress": "/b", "position": "2", "cc": "2", "activity": "0"], ["msgAddress": "/c", "position": "3", "cc": "3", "activity": "0"]]
+        "Mappings" : [["msgAddress": "/a", "position": "1", "cc": "1", "activity": "0:0"], ["msgAddress": "/b", "position": "2", "cc": "2", "activity": "0:0"], ["msgAddress": "/c", "position": "3", "cc": "3", "activity": "0:0"]]
         ])
     
     private var oscClient:OSCClient!
@@ -76,23 +84,10 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 if let incomingString = string {
-                    if incomingString.rangeOfString("|") == nil {
-                    // Append to buffer:
-                        self.valuesBuffer += incomingString
-                    } else if incomingString.rangeOfString("|") != nil {
-                        for c in incomingString.characters {
-                            // If not end of received package, append to buffer
-                            if c != "|" {
-                                self.valuesBuffer.append(c)
-                            } else {
-                            // If end of received package and buffer is not empty, send data:
-                                if self.valuesBuffer.characters.count > 0 {
-                                    self.sendData()
-                                    self.valuesBuffer = ""
-                                }
-                            }
-                        }
-                    }
+                    print(incomingString)
+                    self.sendData(incomingString)
+                    // Append incoming data to buffer (Currently unused)
+                    //self.dataBuffer.append(incomingString)
                 }
             }
             print("Using OSC")
@@ -111,23 +106,7 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
             nrfManager.dataCallback = {
                 (data:NSData?, string:String?)->() in
                 if let incomingString = string {
-                    if incomingString.rangeOfString("|") == nil {
-                        // Append to buffer:
-                        self.valuesBuffer += incomingString
-                    } else if incomingString.rangeOfString("|") != nil {
-                        for c in incomingString.characters {
-                            // If not end of received package, append to buffer
-                            if c != "|" {
-                                self.valuesBuffer.append(c)
-                            } else {
-                                // If end of received package and buffer is not empty, send data:
-                                if self.valuesBuffer.characters.count > 0 {
-                                    self.sendData()
-                                    self.valuesBuffer = ""
-                                }
-                            }
-                        }
-                    }
+                    self.sendData(incomingString)
                 }
             }
             print("Using MIDI")
@@ -149,43 +128,68 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         mappingTableView.reloadData()
     }
     
-    func sendData() {
-        print(valuesBuffer)
-        let incomingArray = valuesBuffer.characters.split{$0 == ","}.map(String.init)
+    /*  Function for consuming a buffer made of incoming Bluetooth data (currently unused)
+        Apple limits the connection interval, as explained in:
+        https://developer.apple.com/hardwaredrivers/BluetoothDesignGuidelines.pdf
+        If the peripheral sends at shorter intervals (shorter than 100ms, according to my observations,
+        but apparently 0x54 = 105ms)
+        packages start to get bundled together.*
+        My initial attempt to solve this was by appending all incoming data to valuesBuffer,
+        and then send a notification to this function for it to consume the data.
+        This works, but introduces a delay :(
+        I think this can still work, but I need to make the consumption triggered
+        not by an incoming data notification, but independently (and fast!).
+
+        * According to that same document, the connection interval cannot be changed,
+        but can be requested by the peripheral by means of a L2CAP Connection Parameter Update Request.
+        (I don't know if that can be done with Bluefruit or RFDuino)
+        Some keywords to Google about:
+        bluetooth LE os x connection interval 0x54 105ms L2CAP CBCentralManager
+    */
+    func consumeInputBuffer()//sender:AnyObject)
+    {
+        while dataBuffer.count > 0 {
+            sendData(dataBuffer[0])
+            dataBuffer.removeAtIndex(0)
+        }
+    }
+    
+    func sendData(incomingString: String) {
+        let incomingArray = incomingString.characters.split{$0 == ","}.map(String.init)
         if inputDataCount != incomingArray.count {
             mappings.removeAll()
             inputDataCount = incomingArray.count
             updateMappings(inputDataCount)
             prevOSCValues.removeAll()
             prevMIDIValues.removeAll()
-            for _ in 0...(incomingArray.count-1) {
+            for _ in 0..<incomingArray.count {
                 prevOSCValues.append(0)
                 prevMIDIValues.append(0)
             }
         }
         if incomingArray.count > 0 {
-            for index in 0...(incomingArray.count-1) {
-                if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: "")) {
+            for index in 0..<incomingArray.count {
+                if let value = Int(incomingArray[index].stringByReplacingOccurrencesOfString("\0", withString: ""), radix: 16) {
                     if outputSelect == "OSC" {
                         if(value != prevOSCValues[index]){
-                            activityLed(index, true)
+                            activityLed(index, true, value)
                             oscMessage.arguments = [value]
                             oscMessage.address = mappings[index]["msgAddress"]!
                             oscClient.sendMessage(oscMessage, to: "udp://\(self.OSCAddress.stringValue):\(self.OSCPort.integerValue)")
                             prevOSCValues[index] = value
                         } else {
-                            activityLed(index, false)
+                            activityLed(index, false, value)
                         }
                     } else if outputSelect == "MIDI" {
                         let val:UInt8 = midiManager.mapRangeToMIDI(value,0,1023)
                         if(val != prevMIDIValues[index]){
-                            activityLed(index, true)
+                            activityLed(index, true, Int(val))
                             let channel = UInt8(MIDIChannel.integerValue)
                             let cc = UInt8(mappings[index]["cc"]!)
                             midiManager.send(channel,cc!,val)
                             prevMIDIValues[index] = val
                         } else {
-                            activityLed(index, false)
+                            activityLed(index, false, Int(val))
                         }
                     }
                 }
@@ -196,7 +200,7 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     @IBAction func refreshMIDIDevices(sender: AnyObject) {
         midiManager.getMIDIDevices()
         MIDIDevice.removeAllItems()
-        MIDIDevice.addItemsWithObjectValues(["Virtual BT port"])
+        MIDIDevice.addItemsWithObjectValues(["BlueMO port"])
         MIDIDevice.addItemsWithObjectValues(midiManager.activeMIDIDeviceNames)
         MIDIDevice.selectItemAtIndex(midiManager.selectedMIDIDevice+1)
         print("Detected MIDI devices: \(MIDIDevice.objectValues)")
@@ -302,7 +306,7 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         mappingTableView.setDelegate(self)
         mappingTableView.setDataSource(self)
         mappingTableView.target = self
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "saveTable:", name: saveTableNotificationKey, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(saveTable), name: saveTableNotificationKey, object: nil)
     }
     
     func loadUserData() {
@@ -321,10 +325,17 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
         var cellIdentifier: String = ""
         let item = mappings[row]
         if tableColumn == tableView.tableColumns[0] {
-            if item["activity"] == "0" {
-                image = NSImage(named: "NSStatusNone")
-            } else {
-                image = NSImage(named: "NSStatusAvailable")
+            if let activity = item["activity"] {
+                let activityArr = activity.characters.split{$0 == ":"}.map(String.init)
+                if activityArr[0] == "1" {
+                    image = NSImage(named: "NSStatusAvailable")
+                } else {
+                    image = NSImage(named: "NSStatusNone")
+                }
+                if activityArr.count > 1 {
+                    //image?.size = NSSize(width: Int(activityArr[1])!, height: 17)
+                    text = activityArr[1]
+                }
             }
             cellIdentifier = "activity"
         } else if tableColumn == tableView.tableColumns[1] {
@@ -362,23 +373,23 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
                 }
             }
             let mapcount = mappings.count
-            for i in mapcount...(incomingCount-1) {
+            for i in mapcount..<incomingCount {
                 let data = ["position": String(i+1), "msgAddress":"/",
-                    "cc":String(maxcc+i-mapcount+1), "acivity": "0"]
+                    "cc":String(maxcc+i-mapcount+1), "activity": "0:0"]
                 mappings.append(data)
             }
         } else {
         // ... or if less messages are received, remove the unused ones
-            mappings.removeRange(Range<Int>(start: incomingCount, end: mappings.count))
+            mappings.removeRange(Range<Int>(incomingCount ..< mappings.count))
         }
         mappingTableView.reloadData()
     }
     
-    func activityLed(index:Int, _ status:Bool) {
+    func activityLed(index:Int, _ status:Bool, _ value: Int) {
         if status {
-            self.mappings[index]["activity"] = "1"
+            self.mappings[index]["activity"] = "1:"+String(value)
         } else {
-            self.mappings[index]["activity"] = "0"
+            self.mappings[index]["activity"] = "0:"+String(value)
         }
         self.mappingTableView.beginUpdates()
         self.mappingTableView.reloadDataForRowIndexes(NSIndexSet(index: index), columnIndexes: NSIndexSet(index: 0))
@@ -388,8 +399,8 @@ class MasterViewController: NSViewController, NSTableViewDelegate, NSTableViewDa
     func clearLeds()
     {
         if mappings.count > 0 {
-            for i in 0...mappings.count-1 {
-                activityLed(i, false)
+            for i in 0..<mappings.count {
+                activityLed(i, false, 0)
             }
         }
     }

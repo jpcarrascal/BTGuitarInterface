@@ -49,7 +49,8 @@ public class MIDIManager:NSObject {
 //            MIDIClientDispose(midiClient)
             status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
             status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
-            MIDISourceCreate(virtualMidiClient, "Virtual BT port", &virtualOutputPort);
+// JP: Too slow. Has to be fixed.
+            MIDISourceCreate(virtualMidiClient, "BlueMO port", &virtualOutputPort);
         }
         selectedMIDIDevice = index
         if status != 0 {
@@ -128,7 +129,11 @@ public class MIDIManager:NSObject {
     }
     
     func mapRangeToMIDI(input: Int, _ input_lowest: Int, _ input_highest: Int) ->UInt8{
-        return UInt8((127 / (float_t(input_highest) - float_t(input_lowest))) * (float_t(input) - float_t(input_lowest)))
+        if input >= 0 && input <= 1023 {
+            return UInt8((127 / (float_t(input_highest) - float_t(input_lowest))) * (float_t(input) - float_t(input_lowest)))
+        } else {
+            return 0
+        }
     }
     
 }
