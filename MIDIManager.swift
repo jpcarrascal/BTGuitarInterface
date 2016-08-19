@@ -36,20 +36,25 @@ public class MIDIManager:NSObject {
         // -1 is the virtual MIDI port
         setActiveMIDIDevice(dev)
     }
-    
+
+    /*
+     setActiveMIDIDevice()
+     Sets the active MIDI device from the list of the devices available in the system.
+     Input argument: the device index.
+     If the index is -1, it creates a virtual MIDI device called "BlueMO".
+     */
     public func setActiveMIDIDevice(index:Int)
     {
         var status = OSStatus(noErr)
         if index >= 0 {
-//            MIDIClientDispose(virtualMidiClient)
+            // MIDIClientDispose(virtualMidiClient)
             status = MIDIClientCreate("MIDIClient", np, nil, &midiClient)
             status = MIDIOutputPortCreate(midiClient, "Output", &outputPort);
             destination = MIDIGetDestination(index)
         } else {
-//            MIDIClientDispose(midiClient)
+            // MIDIClientDispose(midiClient)
             status = MIDIClientCreate("VirtualMIDIClient", np, nil, &virtualMidiClient)
             status = MIDIOutputPortCreate(virtualMidiClient, "Output2", &virtualOutputPort);
-// JP: Too slow. Has to be fixed.
             MIDISourceCreate(virtualMidiClient, "BlueMO port", &virtualOutputPort);
         }
         selectedMIDIDevice = index
@@ -57,7 +62,12 @@ public class MIDIManager:NSObject {
             print("Error while selecting MIDI device!")
         }
     }
-    
+
+    /*
+     getMIDIDevices()
+     Finds all the MIDI devices avalible and online in ths system.
+     This function is a little hacky, but so far it gets the work done.
+     */
     public func getMIDIDevices() {
         activeMIDIDeviceNames.removeAll()
         activeMIDIDevices.removeAll()
@@ -112,6 +122,13 @@ public class MIDIManager:NSObject {
         }
     }
 
+    /*
+     send()
+     Actually sends midi DATA, to either the virtual MIDI port (see setActiveMIDIDevice() above)
+     or to a system MIDI port.
+     Right now it only sends CC data, but with some simple tweaking it could send any message.
+     As arguments, it expects 1) the MIDI channel number, 2) CC number and 3) value to send.
+     */
     public func send(MIDIChannel: UInt8, _ MIDIControl: UInt8, _ MIDIControlValue: UInt8) ->OSStatus {
         var packet:MIDIPacket = MIDIPacket()
         packet.timeStamp = 0
@@ -127,7 +144,11 @@ public class MIDIManager:NSObject {
             return MIDISend(outputPort, destination, &packetList)
         }
     }
-    
+
+    /*
+     mapRangeToMIDI()
+     This is just a helper function for mapping a 0~1023 range to the 0~127 range used by MIDI.
+     */
     func mapRangeToMIDI(input: Int, _ input_lowest: Int, _ input_highest: Int) ->UInt8{
         if input >= 0 && input <= 1023 {
             return UInt8((127 / (float_t(input_highest) - float_t(input_lowest))) * (float_t(input) - float_t(input_lowest)))
